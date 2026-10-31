@@ -1,0 +1,73 @@
+name: Nitpick
+options:
+  xcodeVersion: "27.1"
+  deploymentTarget:
+    macOS: "15.0"
+    tvOS: "18.0"
+  createIntermediateGroups: true
+  generateEmptyDirectories: true
+  groupSortPosition: top
+
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    SWIFT_STRICT_CONCURRENCY: complete
+    SWIFT_DEFAULT_ACTOR_ISOLATION: MainActor
+    CODE_SIGN_STYLE: Automatic
+    # Set your Apple Developer team here (or in Xcode ▸ Signing & Capabilities) before running on devices.
+    DEVELOPMENT_TEAM: ""
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    # One App Store product across macOS and tvOS (universal purchase): both targets share this identifier.
+    PRODUCT_BUNDLE_IDENTIFIER: com.jonathanseriesx.nitpick
+    PRODUCT_NAME: Nitpick
+    ENABLE_USER_SCRIPT_SANDBOXING: YES
+    GENERATE_INFOPLIST_FILE: NO
+    ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS: YES
+    SWIFT_EMIT_LOC_STRINGS: YES
+    LOCALIZATION_PREFERS_STRING_CATALOGS: YES
+
+packages:
+  NitpickKit:
+    path: Packages/NitpickKit
+
+targets:
+  Nitpick:
+    type: application
+    platform: macOS
+    sources:
+      - path: Apps/NitpickMac
+    dependencies:
+      - package: NitpickKit
+        products: [Calibration, MeterKit, LGControl, PatternLink, ColorScience]
+    settings:
+      base:
+        INFOPLIST_FILE: Apps/NitpickMac/Info.plist
+        CODE_SIGN_ENTITLEMENTS: Apps/NitpickMac/Nitpick.entitlements
+        ENABLE_HARDENED_RUNTIME: YES
+        ENABLE_APP_SANDBOX: YES
+        COMBINE_HIDPI_IMAGES: YES
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/../Frameworks"
+    scheme:
+      testTargets: []
+      gatherCoverageData: false
+
+  NitpickTV:
+    type: application
+    platform: tvOS
+    sources:
+      - path: Apps/NitpickTV
+    dependencies:
+      - package: NitpickKit
+        products: [PatternLink, ColorScience]
+    settings:
+      base:
+        INFOPLIST_FILE: Apps/NitpickTV/Info.plist
+        CODE_SIGN_ENTITLEMENTS: Apps/NitpickTV/NitpickTV.entitlements
+        ASSETCATALOG_COMPILER_APPICON_NAME: "App Icon & Top Shelf Image"
+        TARGETED_DEVICE_FAMILY: "3"
+        LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/Frameworks"
+    scheme:
+      testTargets: []
+      gatherCoverageData: false

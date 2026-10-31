@@ -1,0 +1,516 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		18C26F7DBC0405390A3E66E4 /* LGControl in Frameworks */ = {isa = PBXBuildFile; productRef = FEC3F7594C38FFFFDC78C12A /* LGControl */; };
+		1B4CB4B9F37CC6D17AA72CE8 /* PatternLink in Frameworks */ = {isa = PBXBuildFile; productRef = CB85FE8E0656478A878A0AF4 /* PatternLink */; };
+		4D7A221607FE51CCD394AD5B /* Calibration in Frameworks */ = {isa = PBXBuildFile; productRef = 946590D83A205AA052BD7892 /* Calibration */; };
+		61E2FDBB6983420749CB331A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7E0FC8B82ED55B459D23CF09 /* Assets.xcassets */; };
+		6990FE84456148F7E8F565BB /* NitpickApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1A1BB5BEE6B29D20DDF548E /* NitpickApp.swift */; };
+		8FBB373C50CA1D12FBE94E35 /* MeterKit in Frameworks */ = {isa = PBXBuildFile; productRef = D0E620260B2578A7BC3B73D9 /* MeterKit */; };
+		8FDDC7783DE0203901E0DA8E /* ColorScience in Frameworks */ = {isa = PBXBuildFile; productRef = 6AC7048799D7360FE026D7C2 /* ColorScience */; };
+		B676933B73418987FF1ED3A5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 15B4971338AC033474C20B2D /* Assets.xcassets */; };
+		C3B6D7FE52557500643BB7DF /* ColorScience in Frameworks */ = {isa = PBXBuildFile; productRef = 9B807589A370160D8109FA76 /* ColorScience */; };
+		CCD728C3D1EAEA1BC8C85800 /* PatternLink in Frameworks */ = {isa = PBXBuildFile; productRef = D6026F4BBC0E423E104F1C1C /* PatternLink */; };
+		F11CC0CCA36F3E18B35D6066 /* NitpickTVApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 186FA284325AA9EDBB2328ED /* NitpickTVApp.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		104FF25A2682E54AD11111F1 /* NitpickTV.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = NitpickTV.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		14BD36ECF0AFCA82F18DCAB8 /* Nitpick.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Nitpick.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		158267BFA9E37441A31215FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		15B4971338AC033474C20B2D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		184F8987E39868FE2B3C4983 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		186FA284325AA9EDBB2328ED /* NitpickTVApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NitpickTVApp.swift; sourceTree = "<group>"; };
+		291E6C011C061A951B168EC9 /* NitpickTV.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NitpickTV.entitlements; sourceTree = "<group>"; };
+		7E0FC8B82ED55B459D23CF09 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		B60730F1CD267AFC2B644C5B /* NitpickKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = NitpickKit; path = Packages/NitpickKit; sourceTree = SOURCE_ROOT; };
+		B7FE7E0B4180968F13307CC9 /* Nitpick.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Nitpick.entitlements; sourceTree = "<group>"; };
+		C1A1BB5BEE6B29D20DDF548E /* NitpickApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NitpickApp.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		C62D346DEAA2AA63D0DA1F1C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1B4CB4B9F37CC6D17AA72CE8 /* PatternLink in Frameworks */,
+				C3B6D7FE52557500643BB7DF /* ColorScience in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D858ECE5D12FE75AB495897B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4D7A221607FE51CCD394AD5B /* Calibration in Frameworks */,
+				8FBB373C50CA1D12FBE94E35 /* MeterKit in Frameworks */,
+				18C26F7DBC0405390A3E66E4 /* LGControl in Frameworks */,
+				CCD728C3D1EAEA1BC8C85800 /* PatternLink in Frameworks */,
+				8FDDC7783DE0203901E0DA8E /* ColorScience in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		18644C5214620719A0D12039 /* Apps */ = {
+			isa = PBXGroup;
+			children = (
+				E79ACDECA6BB77E88E4F9A99 /* NitpickMac */,
+				7A898B9DB461789C460F6FF5 /* NitpickTV */,
+			);
+			path = Apps;
+			sourceTree = "<group>";
+		};
+		3DB7DF4EBDB283CB08FC0FCE /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				14BD36ECF0AFCA82F18DCAB8 /* Nitpick.app */,
+				104FF25A2682E54AD11111F1 /* NitpickTV.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		7A898B9DB461789C460F6FF5 /* NitpickTV */ = {
+			isa = PBXGroup;
+			children = (
+				7E0FC8B82ED55B459D23CF09 /* Assets.xcassets */,
+				158267BFA9E37441A31215FE /* Info.plist */,
+				291E6C011C061A951B168EC9 /* NitpickTV.entitlements */,
+				186FA284325AA9EDBB2328ED /* NitpickTVApp.swift */,
+			);
+			path = NitpickTV;
+			sourceTree = "<group>";
+		};
+		E79ACDECA6BB77E88E4F9A99 /* NitpickMac */ = {
+			isa = PBXGroup;
+			children = (
+				15B4971338AC033474C20B2D /* Assets.xcassets */,
+				184F8987E39868FE2B3C4983 /* Info.plist */,
+				B7FE7E0B4180968F13307CC9 /* Nitpick.entitlements */,
+				C1A1BB5BEE6B29D20DDF548E /* NitpickApp.swift */,
+			);
+			path = NitpickMac;
+			sourceTree = "<group>";
+		};
+		EC5CDF13C349E93DDCAFAC14 = {
+			isa = PBXGroup;
+			children = (
+				18644C5214620719A0D12039 /* Apps */,
+				F9E4C4E8A034367C708ED62B /* Packages */,
+				3DB7DF4EBDB283CB08FC0FCE /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		F9E4C4E8A034367C708ED62B /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				B60730F1CD267AFC2B644C5B /* NitpickKit */,
+			);
+			path = Packages;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		835E869EE6063D86AED4B21A /* NitpickTV */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A850E20650A471F61ACD2B15 /* Build configuration list for PBXNativeTarget "NitpickTV" */;
+			buildPhases = (
+				9E610B592C28D89B67386DD9 /* Sources */,
+				8757270C6D95B522ECB7D08D /* Resources */,
+				C62D346DEAA2AA63D0DA1F1C /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = NitpickTV;
+			packageProductDependencies = (
+				CB85FE8E0656478A878A0AF4 /* PatternLink */,
+				9B807589A370160D8109FA76 /* ColorScience */,
+			);
+			productName = NitpickTV;
+			productReference = 104FF25A2682E54AD11111F1 /* NitpickTV.app */;
+			productType = "com.apple.product-type.application";
+		};
+		F4983611003EFF862708C4D5 /* Nitpick */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9FAC952D759384BA03942E22 /* Build configuration list for PBXNativeTarget "Nitpick" */;
+			buildPhases = (
+				87F3773B1CCCB2FE2A313454 /* Sources */,
+				0676CEE0A0EF2C0FB366DC1E /* Resources */,
+				D858ECE5D12FE75AB495897B /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Nitpick;
+			packageProductDependencies = (
+				946590D83A205AA052BD7892 /* Calibration */,
+				D0E620260B2578A7BC3B73D9 /* MeterKit */,
+				FEC3F7594C38FFFFDC78C12A /* LGControl */,
+				D6026F4BBC0E423E104F1C1C /* PatternLink */,
+				6AC7048799D7360FE026D7C2 /* ColorScience */,
+			);
+			productName = Nitpick;
+			productReference = 14BD36ECF0AFCA82F18DCAB8 /* Nitpick.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		664D3F8607CA1104533067AD /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 2710;
+				TargetAttributes = {
+					835E869EE6063D86AED4B21A = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+					F4983611003EFF862708C4D5 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 6929670158FFE569EFCA7D82 /* Build configuration list for PBXProject "Nitpick" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = EC5CDF13C349E93DDCAFAC14;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				D6652C02990F2A21B2D278DC /* XCLocalSwiftPackageReference "Packages/NitpickKit" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 3DB7DF4EBDB283CB08FC0FCE /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F4983611003EFF862708C4D5 /* Nitpick */,
+				835E869EE6063D86AED4B21A /* NitpickTV */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		0676CEE0A0EF2C0FB366DC1E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B676933B73418987FF1ED3A5 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8757270C6D95B522ECB7D08D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				61E2FDBB6983420749CB331A /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		87F3773B1CCCB2FE2A313454 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6990FE84456148F7E8F565BB /* NitpickApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9E610B592C28D89B67386DD9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F11CC0CCA36F3E18B35D6066 /* NitpickTVApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		1965FBE5E892D2B13215F23C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_ENTITLEMENTS = Apps/NitpickTV/NitpickTV.entitlements;
+				INFOPLIST_FILE = Apps/NitpickTV/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				SDKROOT = appletvos;
+				TARGETED_DEVICE_FAMILY = 3;
+			};
+			name = Release;
+		};
+		4B6F2EC134620598A70805D5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Apps/NitpickMac/Nitpick.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = Apps/NitpickMac/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		4E0A9635646F8DB96EB005F1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_ENTITLEMENTS = Apps/NitpickTV/NitpickTV.entitlements;
+				INFOPLIST_FILE = Apps/NitpickTV/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				SDKROOT = appletvos;
+				TARGETED_DEVICE_FAMILY = 3;
+			};
+			name = Debug;
+		};
+		71CFF3166E2A255375B4BC26 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MARKETING_VERSION = 0.1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jonathanseriesx.nitpick;
+				PRODUCT_NAME = Nitpick;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+				TVOS_DEPLOYMENT_TARGET = 18.0;
+			};
+			name = Release;
+		};
+		EB3B22EB9C951A0F7D69FCB8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Apps/NitpickMac/Nitpick.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = Apps/NitpickMac/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		EED8F36C666AFA3F97525A7A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MARKETING_VERSION = 0.1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jonathanseriesx.nitpick;
+				PRODUCT_NAME = Nitpick;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+				TVOS_DEPLOYMENT_TARGET = 18.0;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		6929670158FFE569EFCA7D82 /* Build configuration list for PBXProject "Nitpick" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EED8F36C666AFA3F97525A7A /* Debug */,
+				71CFF3166E2A255375B4BC26 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		9FAC952D759384BA03942E22 /* Build configuration list for PBXNativeTarget "Nitpick" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EB3B22EB9C951A0F7D69FCB8 /* Debug */,
+				4B6F2EC134620598A70805D5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		A850E20650A471F61ACD2B15 /* Build configuration list for PBXNativeTarget "NitpickTV" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4E0A9635646F8DB96EB005F1 /* Debug */,
+				1965FBE5E892D2B13215F23C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		D6652C02990F2A21B2D278DC /* XCLocalSwiftPackageReference "Packages/NitpickKit" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/NitpickKit;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		6AC7048799D7360FE026D7C2 /* ColorScience */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ColorScience;
+		};
+		946590D83A205AA052BD7892 /* Calibration */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Calibration;
+		};
+		9B807589A370160D8109FA76 /* ColorScience */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ColorScience;
+		};
+		CB85FE8E0656478A878A0AF4 /* PatternLink */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PatternLink;
+		};
+		D0E620260B2578A7BC3B73D9 /* MeterKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MeterKit;
+		};
+		D6026F4BBC0E423E104F1C1C /* PatternLink */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PatternLink;
+		};
+		FEC3F7594C38FFFFDC78C12A /* LGControl */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LGControl;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 664D3F8607CA1104533067AD /* Project object */;
+}
