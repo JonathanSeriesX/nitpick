@@ -30,6 +30,16 @@ import Testing
     }
 }
 
+@Test func codesClampAnyInputToLegalRange() {
+    let f = SignalFormat.sdr  // 10-bit limited: legal 4…1019, black 64, white 940
+    #expect(f.code(forSignal: 1.09) == 1019 && f.code(forSignal: -0.1) == 4)  // super-white / sub-black stay legal
+    // Huge, infinite and NaN signals (a malformed pattern from the wire) must not trap in the Int conversion.
+    #expect(f.code(forSignal: 1e300) == 1019 && f.code(forSignal: -.infinity) == 4 && f.code(forSignal: .nan) == 64)
+    let e = YCbCr.encode(SignalRGB(r: 1e300, g: 0, b: -1e300), format: f)
+    #expect(f.legalCodes.contains(e.y) && e.cb == 4 && e.cr == 1019)
+    #expect(YCbCr.encode(SignalRGB(r: .nan, g: .nan, b: .nan), format: f) == (64, 512, 512))
+}
+
 @Test func yCbCrRoundTrip() {
     let f = SignalFormat(colorimetry: .bt2020, transfer: .pq, range: .limited, bitDepth: .ten)
     let rgb = SignalRGB(r: 0.62, g: 0.31, b: 0.12)

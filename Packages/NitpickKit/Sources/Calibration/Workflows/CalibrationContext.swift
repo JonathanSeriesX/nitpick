@@ -1,9 +1,10 @@
+import ColorScience
 import Foundation
 import Synchronization
-import ColorScience
 
 /// What calibration steps share: devices, the resolved target, bounds and the event sink.
-/// Every TV write is clamped to `bounds` and every TV call runs under `deviceTimeout`.
+/// Every TV write is clamped to `bounds`; every TV call runs under `deviceTimeout`, calibration commands under
+/// `calibrationTimeout`.
 public struct CalibrationContext: Sendable {
     public var tv: any TVController
     public var measurer: Measurer
@@ -11,27 +12,49 @@ public struct CalibrationContext: Sendable {
     public var pictureMode: String
     public var bounds: ControlBounds
     public var deviceTimeout: Duration
+    /// Deadline of one `sendCalibration` call. LG settles 3 s after each externalpq command, and a bank reset is nine.
+    public var calibrationTimeout: Duration
     public var emit: @Sendable (WorkflowEvent) -> Void
     let runLog: RunLog
 
-    public init(tv: any TVController, measurer: Measurer, target: CalibrationTarget, pictureMode: String,
-                bounds: ControlBounds = ControlBounds(), deviceTimeout: Duration = .seconds(10),
-                emit: @escaping @Sendable (WorkflowEvent) -> Void = { _ in }) {
-        self.init(tv: tv, measurer: measurer, target: target, pictureMode: pictureMode, bounds: bounds,
-                  deviceTimeout: deviceTimeout, emit: emit, log: RunLog())
+    public init(
+        tv: any TVController, measurer: Measurer, target: CalibrationTarget, pictureMode: String,
+        bounds: ControlBounds = ControlBounds(), deviceTimeout: Duration = .seconds(10),
+        calibrationTimeout: Duration = .seconds(60), emit: @escaping @Sendable (WorkflowEvent) -> Void = { _ in }
+    ) {
+        self.init(
+            tv: tv, measurer: measurer, target: target, pictureMode: pictureMode, bounds: bounds,
+            deviceTimeout: deviceTimeout, calibrationTimeout: calibrationTimeout, emit: emit, log: RunLog())
     }
 
-    init(tv: any TVController, measurer: Measurer, target: CalibrationTarget, pictureMode: String, bounds: ControlBounds,
-         deviceTimeout: Duration, emit: @escaping @Sendable (WorkflowEvent) -> Void, log: RunLog) {
-        self.tv = tv; self.measurer = measurer; self.target = target; self.pictureMode = pictureMode; self.bounds = bounds
-        self.deviceTimeout = deviceTimeout; runLog = log
-        self.emit = { event in log.record(event); emit(event) }
+    init(
+        tv: any TVController, measurer: Measurer, target: CalibrationTarget, pictureMode: String, bounds: ControlBounds,
+        deviceTimeout: Duration, calibrationTimeout: Duration, emit: @escaping @Sendable (WorkflowEvent) -> Void, log: RunLog
+    ) {
+        self.tv = tv
+        self.measurer = measurer
+        self.target = target
+        self.pictureMode = pictureMode
+        self.bounds = bounds
+        self.deviceTimeout = deviceTimeout
+        self.calibrationTimeout = calibrationTimeout
+        runLog = log
+        self.emit = { event in
+            log.record(event)
+            emit(event)
+        }
     }
 
     /// Runs a TV call under the device timeout.
     public func tvCall<T: Sendable>(_ body: @escaping @Sendable (any TVController) async throws -> T) async throws -> T {
         let tv = self.tv
         return try await withTimeout(deviceTimeout, "TV") { try await body(tv) }
+    }
+
+    /// Sends one calibration command under `calibrationTimeout`.
+    func calibrationCall(_ command: CalibrationCommand) async throws {
+        let tv = self.tv
+        try await withTimeout(calibrationTimeout, "TV") { try await tv.sendCalibration(command) }
     }
 
     public func readSettings() async throws -> PictureSettings { try await tvCall { try await $0.readPictureSettings(pictureMode: nil) } }
@@ -72,9 +95,9 @@ public struct CalibrationContext: Sendable {
     public func upload(_ command: CalibrationCommand, _ description: String) async throws {
         let mode = pictureMode
         runLog.calibration(open: true)
-        try await tvCall { try await $0.sendCalibration(.start(pictureMode: mode)) }
-        try await tvCall { try await $0.sendCalibration(command) }
-        try await tvCall { try await $0.sendCalibration(.end(pictureMode: mode)) }
+        try await calibrationCall(.start(pictureMode: mode))
+        try await calibrationCall(command)
+        try await calibrationCall(.end(pictureMode: mode))
         runLog.calibration(open: false)
         if case .resetCalibration = command { return }
         runLog.upload(description)
@@ -82,8 +105,9 @@ public struct CalibrationContext: Sendable {
 
     /// Measures a patch and emits `.measurement`.
     public func measure(_ signal: SignalRGB, reference: XYZ?) async throws -> MeterReading {
-        let reading = try await measurer.measure(signal, format: target.format, metadata: target.hdr10Metadata,
-                                                 expectedLuminance: reference?.Y)
+        let reading = try await measurer.measure(
+            signal, format: target.format, metadata: target.hdr10Metadata,
+            expectedLuminance: reference?.Y)
         emit(.measurement(stimulus: signal, reading: reading, reference: reference))
         return reading
     }

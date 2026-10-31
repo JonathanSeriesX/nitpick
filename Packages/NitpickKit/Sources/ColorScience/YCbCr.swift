@@ -16,9 +16,7 @@ public enum YCbCr {
         let cr = (rgb.r - y) / (2 * (1 - kr))
         let zero = Double(format.chromaZeroCode)
         let scale = chromaScale(format)
-        func chroma(_ c: Double) -> Int {
-            Swift.min(Swift.max(Int((zero + c * scale).rounded()), format.legalCodes.lowerBound), format.legalCodes.upperBound)
-        }
+        func chroma(_ c: Double) -> Int { format.legalCode(zero + c * scale, ifNaN: format.chromaZeroCode) }
         return (format.code(forSignal: y), chroma(cb), chroma(cr))
     }
 

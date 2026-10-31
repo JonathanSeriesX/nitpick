@@ -169,14 +169,12 @@ enum SSDPSocket {
 public enum WakeOnLAN {
     /// 102 bytes: 6 × `0xFF`, then the 6-byte MAC 16 times. MAC as `a8:23:fe:00:11:22` (`:`/`-` separated or bare hex).
     public static func packet(mac: String) throws -> Data {
-        let hex = mac.filter(\.isHexDigit)
-        guard hex.count == 12, mac.filter({ !$0.isHexDigit && $0 != ":" && $0 != "-" }).isEmpty else {
+        // `hexDigitValue`, not `UInt8(_:radix:)`: `isHexDigit` also accepts full-width digits, which radix parsing rejects.
+        let nibbles = mac.compactMap(\.hexDigitValue)
+        guard nibbles.count == 12, mac.allSatisfy({ $0.isHexDigit || $0 == ":" || $0 == "-" }) else {
             throw LGError.invalidPayload("bad MAC address \(mac)")
         }
-        let bytes = stride(from: 0, to: 12, by: 2).map { i -> UInt8 in
-            let s = hex.index(hex.startIndex, offsetBy: i)
-            return UInt8(hex[s..<hex.index(s, offsetBy: 2)], radix: 16)!
-        }
+        let bytes = stride(from: 0, to: 12, by: 2).map { UInt8(nibbles[$0] << 4 | nibbles[$0 + 1]) }
         return Data(repeating: 0xFF, count: 6) + Data((0..<16).flatMap { _ in bytes })
     }
 

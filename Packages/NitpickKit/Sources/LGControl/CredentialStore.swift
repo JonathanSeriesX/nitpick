@@ -28,7 +28,9 @@ public struct TVCredentials: Codable, Sendable, Hashable {
 
 /// Per-TV credential storage, keyed by the TV's stable id (SSDP UDN / hello `deviceUUID` without `uuid:`), never by IP.
 public protocol TVCredentialStore: Sendable {
-    func credentials(for tvID: String) -> TVCredentials?
+    /// Nil only when nothing is stored. A store that cannot read must throw: treating that as "not paired" would skip
+    /// the pinned-certificate check and re-pair on trust-on-first-use.
+    func credentials(for tvID: String) throws -> TVCredentials?
     func save(_ credentials: TVCredentials, for tvID: String) throws
     func remove(tvID: String) throws
 }
@@ -70,13 +72,17 @@ public struct KeychainTVCredentialStore: TVCredentialStore {
         [kSecClass as String: kSecClassGenericPassword, kSecAttrService as String: service, kSecAttrAccount as String: tvID]
     }
 
-    public func credentials(for tvID: String) -> TVCredentials? {
+    public func credentials(for tvID: String) throws -> TVCredentials? {
         var q = query(tvID)
         q[kSecReturnData as String] = true
         q[kSecMatchLimit as String] = kSecMatchLimitOne
         var result: CFTypeRef?
-        guard SecItemCopyMatching(q as CFDictionary, &result) == errSecSuccess, let data = result as? Data else { return nil }
-        return try? JSONDecoder().decode(TVCredentials.self, from: data)
+        let status = SecItemCopyMatching(q as CFDictionary, &result)
+        if status == errSecItemNotFound { return nil }
+        guard status == errSecSuccess, let data = result as? Data else {
+            throw LGError.unsupported("Keychain read failed (OSStatus \(status))")
+        }
+        return try JSONDecoder().decode(TVCredentials.self, from: data)
     }
 
     public func save(_ credentials: TVCredentials, for tvID: String) throws {

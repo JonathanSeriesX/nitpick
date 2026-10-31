@@ -1,5 +1,5 @@
-import Foundation
 import ColorScience
+import Foundation
 import PatternLink
 
 public struct MeasurementSettings: Codable, Hashable, Sendable {
@@ -15,10 +15,17 @@ public struct MeasurementSettings: Codable, Hashable, Sendable {
     /// Wall-clock deadline for each pattern-generator or meter call.
     public var perPatternTimeout: Duration
 
-    public init(settlingTime: Duration, minReads: Int = 1, maxReads: Int = 5, targetNoise: Double = 0.004,
-                window: WindowSpec = .tenPercent, blackPatchBetweenPatterns: Bool = false, perPatternTimeout: Duration = .seconds(15)) {
-        self.settlingTime = settlingTime; self.minReads = minReads; self.maxReads = maxReads; self.targetNoise = targetNoise
-        self.window = window; self.blackPatchBetweenPatterns = blackPatchBetweenPatterns; self.perPatternTimeout = perPatternTimeout
+    public init(
+        settlingTime: Duration, minReads: Int = 1, maxReads: Int = 5, targetNoise: Double = 0.004,
+        window: WindowSpec = .tenPercent, blackPatchBetweenPatterns: Bool = false, perPatternTimeout: Duration = .seconds(15)
+    ) {
+        self.settlingTime = settlingTime
+        self.minReads = minReads
+        self.maxReads = maxReads
+        self.targetNoise = targetNoise
+        self.window = window
+        self.blackPatchBetweenPatterns = blackPatchBetweenPatterns
+        self.perPatternTimeout = perPatternTimeout
     }
 
     public static let sdr = MeasurementSettings(settlingTime: .milliseconds(800))
@@ -33,15 +40,22 @@ public struct Measurer: Sendable {
     public var settings: MeasurementSettings
 
     public init(meter: any Meter, source: any PatternSource, sleeper: any Sleeper, settings: MeasurementSettings) {
-        self.meter = meter; self.source = source; self.sleeper = sleeper; self.settings = settings
+        self.meter = meter
+        self.source = source
+        self.sleeper = sleeper
+        self.settings = settings
     }
 
     /// Measures one window patch. The result averages XYZ over 1…maxReads reads; `noiseEstimate` is the relative
     /// 1σ luminance noise of that average; `integrationTime` the mean per read; flags are the union.
     /// `expectedLuminance` is the meter's hint for its first read; later reads use the previous reading.
-    public func measure(_ signal: SignalRGB, format: SignalFormat, metadata: HDR10StaticMetadata? = nil,
-                        expectedLuminance: Double? = nil) async throws -> MeterReading {
-        let source = self.source, meter = self.meter, timeout = settings.perPatternTimeout
+    public func measure(
+        _ signal: SignalRGB, format: SignalFormat, metadata: HDR10StaticMetadata? = nil,
+        expectedLuminance: Double? = nil
+    ) async throws -> MeterReading {
+        let source = self.source
+        let meter = self.meter
+        let timeout = settings.perPatternTimeout
         try Task.checkCancellation()
         if settings.blackPatchBetweenPatterns {
             _ = try await withTimeout(timeout, "Pattern generator") { try await source.show(.black(format: format)) }
@@ -84,9 +98,10 @@ public struct Measurer: Sendable {
         let times = readings.compactMap(\.integrationTime)
         var flags: [String] = []
         for flag in readings.flatMap(\.flags) where !flags.contains(flag) { flags.append(flag) }
-        return MeterReading(xyz: xyz, timestamp: readings.last!.timestamp,
-                            integrationTime: times.isEmpty ? nil : times.reduce(0, +) / Double(times.count),
-                            noiseEstimate: noiseOfMean(readings), flags: flags)
+        return MeterReading(
+            xyz: xyz, timestamp: readings.last!.timestamp,
+            integrationTime: times.isEmpty ? nil : times.reduce(0, +) / Double(times.count),
+            noiseEstimate: noiseOfMean(readings), flags: flags)
     }
 }
 
@@ -98,15 +113,21 @@ public struct MeasurementPlan: Hashable, Sendable {
     public var saturationSweeps = true
     public var verification = true
 
-    public init(grayscale: Bool = true, nearBlack: Bool = true, primariesSecondaries: Bool = true,
-                saturationSweeps: Bool = true, verification: Bool = true) {
-        self.grayscale = grayscale; self.nearBlack = nearBlack; self.primariesSecondaries = primariesSecondaries
-        self.saturationSweeps = saturationSweeps; self.verification = verification
+    public init(
+        grayscale: Bool = true, nearBlack: Bool = true, primariesSecondaries: Bool = true,
+        saturationSweeps: Bool = true, verification: Bool = true
+    ) {
+        self.grayscale = grayscale
+        self.nearBlack = nearBlack
+        self.primariesSecondaries = primariesSecondaries
+        self.saturationSweeps = saturationSweeps
+        self.verification = verification
     }
 
     public static let full = MeasurementPlan()
     public static let withoutVerification = MeasurementPlan(verification: false)
-    public static let verificationOnly = MeasurementPlan(grayscale: false, nearBlack: false, primariesSecondaries: false, saturationSweeps: false)
+    public static let verificationOnly = MeasurementPlan(
+        grayscale: false, nearBlack: false, primariesSecondaries: false, saturationSweeps: false)
 }
 
 extension Measurer {
@@ -114,10 +135,15 @@ extension Measurer {
     ///
     /// SDR: the target's black is replaced by the measured black (0 when below the meter floor) before references are
     /// computed. HDR: grey references use `Metrics.hdrGrayReference` with the measured peak; points beyond the expected
-    /// knee are flagged `.inRollOff`. `onReading` sees every averaged reading with its reference.
-    public func measureSet(_ plan: MeasurementPlan, target: CalibrationTarget,
-                           onReading: @Sendable (SignalRGB, MeterReading, XYZ?) -> Void = { _, _, _ in }) async throws -> MeasurementSet {
-        let format = target.format, metadata = target.hdr10Metadata
+    /// knee are flagged `.inRollOff`. Colour targets outside `nativeGamut` (default: the gamut of this run's measured
+    /// primaries, HDR only — see `Metrics.nativeGamut`) are judged against `Metrics.gamutClipped` and flagged
+    /// `.outOfGamut`. `onReading` sees every averaged reading with its reference.
+    public func measureSet(
+        _ plan: MeasurementPlan, target: CalibrationTarget, nativeGamut: ColorSpacePrimaries? = nil,
+        onReading: @Sendable (SignalRGB, MeterReading, XYZ?) -> Void = { _, _, _ in }
+    ) async throws -> MeasurementSet {
+        let format = target.format
+        let metadata = target.hdr10Metadata
         // Signals are quantised up front so stimuli and references describe what the TV really received.
         func read(_ signal: SignalRGB) async throws -> MeterReading {
             let reading = try await measure(signal, format: format, metadata: metadata, expectedLuminance: target.reference(signal).Y)
@@ -136,7 +162,8 @@ extension Measurer {
         let resolved = blackReading == nil ? target : target.withBlackLevel(black)
 
         func grayPoint(_ s: Double, _ reading: MeterReading) -> GrayscalePoint {
-            var reference = resolved.reference(.gray(s)), flags: Set<ColorError.Flag> = []
+            var reference = resolved.reference(.gray(s))
+            var flags: Set<ColorError.Flag> = []
             if resolved.isHDR {
                 let r = Metrics.hdrGrayReference(stimulus: s, target: resolved, displayPeak: peak)
                 reference = r.xyz
@@ -145,25 +172,42 @@ extension Measurer {
             var gamma: Double?
             let relative = (reading.luminance - black) / (peak - black)
             if !resolved.isHDR, s > 0, s < 1, relative > 0, peak > black { gamma = log(relative) / log(s) }
-            return GrayscalePoint(stimulus: s, reading: reading, error: Metrics.error(measured: reading.xyz, reference: reference, target: resolved, flags: flags),
-                                  cct: CIE.cct(reading.chromaticity), gamma: gamma)
+            return GrayscalePoint(
+                stimulus: s, reading: reading,
+                error: Metrics.error(measured: reading.xyz, reference: reference, target: resolved, flags: flags),
+                cct: CIE.cct(reading.chromaticity), gamma: gamma)
         }
 
-        func patches(_ list: [(name: String, signal: SignalRGB)]) async throws -> [ColorPatchResult] {
-            var out: [ColorPatchResult] = []
+        typealias Patch = (name: String, signal: SignalRGB, reading: MeterReading)
+        func measurePatches(_ list: [(name: String, signal: SignalRGB)]) async throws -> [Patch] {
+            var out: [Patch] = []
             for p in list {
                 let signal = p.signal.quantized(in: format)
-                let reading = try await read(signal)
-                out.append(ColorPatchResult(name: p.name, signal: signal,
-                                            error: Metrics.error(measured: reading.xyz, reference: resolved.reference(signal), target: resolved)))
+                out.append((p.name, signal, try await read(signal)))
             }
             return out
         }
-        let primaries = plan.primariesSecondaries ? try await patches(Stimuli.primariesSecondaries(resolved)) : []
-        let sweeps = plan.saturationSweeps ? try await patches(Stimuli.saturationSweeps(resolved)) : []
-        let verification = plan.verification ? try await patches(Stimuli.verification(resolved)) : []
-        return MeasurementSet(dynamicRange: target.dynamicRange, grayscale: grayReadings.map(grayPoint),
-                              primariesSecondaries: primaries, saturationSweeps: sweeps, verificationPatches: verification,
-                              nearBlack: nearReadings.map(grayPoint), peakLuminance: peak, blackLevel: black)
+        let primaries = plan.primariesSecondaries ? try await measurePatches(Stimuli.primariesSecondaries(resolved)) : []
+        let sweeps = plan.saturationSweeps ? try await measurePatches(Stimuli.saturationSweeps(resolved)) : []
+        let verification = plan.verification ? try await measurePatches(Stimuli.verification(resolved)) : []
+        let gamut = nativeGamut ?? Metrics.nativeGamut(primaries.map { ($0.name, $0.reading.xyz) }, target: resolved)
+        func results(_ patches: [Patch]) -> [ColorPatchResult] {
+            patches.map { p in
+                var reference = resolved.reference(p.signal)
+                var flags: Set<ColorError.Flag> = []
+                if let gamut, let clipped = Metrics.gamutClipped(reference, gamut: gamut) {
+                    reference = clipped
+                    flags.insert(.outOfGamut)
+                }
+                return ColorPatchResult(
+                    name: p.name, signal: p.signal,
+                    error: Metrics.error(measured: p.reading.xyz, reference: reference, target: resolved, flags: flags))
+            }
+        }
+        return MeasurementSet(
+            dynamicRange: target.dynamicRange, grayscale: grayReadings.map(grayPoint),
+            primariesSecondaries: results(primaries), saturationSweeps: results(sweeps),
+            verificationPatches: results(verification),
+            nearBlack: nearReadings.map(grayPoint), peakLuminance: peak, blackLevel: black)
     }
 }

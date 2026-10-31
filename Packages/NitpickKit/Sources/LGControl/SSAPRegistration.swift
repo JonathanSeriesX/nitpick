@@ -81,11 +81,11 @@ public enum SSAPRegistration {
         async throws -> (SSAPConnection, SSAPRegistrationResult)
     {
         let known = tvID.map(normalizedID)
-        var connection = try await open(known.flatMap(store.credentials)?.certificateFingerprint)
+        var connection = try await open(try known.flatMap(store.credentials)?.certificateFingerprint)
         do {
             let hello = await connection.hello
             let id = known ?? hello?.deviceUUID.map(normalizedID) ?? connection.host
-            let stored = store.credentials(for: id)
+            let stored = try store.credentials(for: id)
             try CertificatePinning.check(pinned: stored?.certificateFingerprint, presented: await connection.certificateFingerprint)
 
             let release = hello?.release

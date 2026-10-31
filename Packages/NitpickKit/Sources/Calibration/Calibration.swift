@@ -36,9 +36,12 @@ public enum CalibrationError: Error, Hashable, Sendable, CustomStringConvertible
 /// Runs `operation` with a wall-clock deadline and throws `CalibrationError.timeout(what)` when it expires.
 ///
 /// The deadline is real time on purpose: it guards device I/O that may never return, which a virtual clock cannot
-/// detect. Cancelling the caller cancels `operation`.
-public func withTimeout<T: Sendable>(_ timeout: Duration, _ what: String,
-                                     _ operation: @escaping @Sendable () async throws -> T) async throws -> T {
+/// detect. Cancelling the caller cancels `operation`. Structured: on expiry `operation` is cancelled and awaited (never
+/// leaked), so `operation` must honour cancellation for the timeout to return on time — every device call here does.
+public func withTimeout<T: Sendable>(
+    _ timeout: Duration, _ what: String,
+    _ operation: @escaping @Sendable () async throws -> T
+) async throws -> T {
     try await withThrowingTaskGroup(of: T.self) { group in
         group.addTask { try await operation() }
         group.addTask {

@@ -1,7 +1,8 @@
-import Foundation
-import Testing
 import ColorScience
+import Foundation
 import PatternLink
+import Testing
+
 @testable import Calibration
 
 @Suite struct WorkflowTests {
@@ -34,7 +35,9 @@ import PatternLink
         let events = try await runWorkflow(WorkflowRunner(), .movieSDR, rig)
         try #require(events.result != nil)
         let target = SessionProfile.movieSDR.target
-        let gray = stride(from: 0.1, through: 1.0, by: 0.05).map { Metrics.deltaE(rig.truth(.gray($0)), target.reference(.gray($0)), target: target) }
+        let gray = stride(from: 0.1, through: 1.0, by: 0.05).map {
+            Metrics.deltaE(rig.truth(.gray($0)), target.reference(.gray($0)), target: target)
+        }
         let colors = Stimuli.verification(target).map { Metrics.deltaE(rig.truth($0.signal), target.reference($0.signal), target: target) }
         #expect(gray.max()! < 0.1, "\(gray)")
         #expect(colors.max()! < 0.2, "\(colors)")
@@ -87,7 +90,12 @@ import PatternLink
         let rollOff = r.after.grayscale.filter(\.error.inRollOff)
         #expect(rollOff.count >= 6)
         #expect(r.after.summary.grayscaleMaxDeltaE == judged.map(\.error.deltaEITP).max()!)
-        #expect(r.failures.allSatisfy { !$0.hasPrefix("grayscale") })
+        // P3 red lies outside the panel's native gamut: reported against the clipped reference, not judged.
+        let red = try #require(r.after.saturationSweeps.first { $0.name == "Red 100% sat" })
+        #expect(red.error.outOfGamut)
+        #expect(SimulatedPanel.nativePrimaries.contains(red.error.reference.chromaticity))
+        #expect(r.after.saturationSweeps.filter(\.error.outOfGamut).count < 6, "only the panel's gamut corners are excused")
+        #expect(r.passed, "\(r.failures)")
     }
 
     @Test func hdr10GameHGiG() async throws {
@@ -103,6 +111,8 @@ import PatternLink
         #expect(rig.panel.calibration(for: "hdr_game").isEmpty)
         #expect(r.after.summary.grayscaleMaxDeltaE < r.before.summary.grayscaleMaxDeltaE)
         #expect(r.after.summary.grayscaleMaxDeltaE <= 3)
+        #expect(r.after.saturationSweeps.contains { $0.error.outOfGamut })
+        #expect(r.passed, "\(r.failures)")
     }
 
     @Test func dolbyVisionFromHDR10Session() async throws {
@@ -131,7 +141,8 @@ import PatternLink
         #expect(config.green.distance(to: native.green) < 0.003)
         #expect(config.blue.distance(to: native.blue) < 0.003)
         #expect(r.lutsUploaded == ["Dolby Vision config dolby_cinema_dark"])
-        let before = r.before.verificationPatches.map(\.error.deltaEITP), after = r.verification.verificationPatches.map(\.error.deltaEITP)
+        let before = r.before.verificationPatches.map(\.error.deltaEITP)
+        let after = r.verification.verificationPatches.map(\.error.deltaEITP)
         #expect(after.reduce(0, +) < before.reduce(0, +) / 2)
         #expect(after.max()! < before.max()!)
     }

@@ -31,6 +31,8 @@ public actor WorkflowRunner {
     public let history: MeasurementHistory?
     /// Wall-clock deadline for each TV and connection call.
     public let deviceTimeout: Duration
+    /// Wall-clock deadline for each calibration command (see `CalibrationContext.calibrationTimeout`).
+    public let calibrationTimeout: Duration
     /// The session as last persisted by the current or last run.
     public private(set) var session: CalibrationSession?
 
@@ -44,10 +46,14 @@ public actor WorkflowRunner {
 
     static let stages = ["Connect", "Signal path", "Settings snapshot", "Pre-calibration", "Adjust", "Post-calibration", "Verification"]
 
-    public init(store: SessionStore? = nil, history: MeasurementHistory? = nil, deviceTimeout: Duration = .seconds(10)) {
+    public init(
+        store: SessionStore? = nil, history: MeasurementHistory? = nil, deviceTimeout: Duration = .seconds(10),
+        calibrationTimeout: Duration = .seconds(60)
+    ) {
         self.store = store
         self.history = history
         self.deviceTimeout = deviceTimeout
+        self.calibrationTimeout = calibrationTimeout
     }
 
     public nonisolated func run(
@@ -137,7 +143,7 @@ public actor WorkflowRunner {
         reporter.settings.minReads = max(reporter.settings.minReads, 3)
         var ctx = CalibrationContext(
             tv: devices.tv, measurer: measurer, target: profile.target, pictureMode: profile.pictureMode,
-            bounds: profile.bounds, deviceTimeout: deviceTimeout, emit: emit, log: log)
+            bounds: profile.bounds, deviceTimeout: deviceTimeout, calibrationTimeout: calibrationTimeout, emit: emit, log: log)
         var restorePoint: RestorePoint?
         var durations: [String: Double] = [:]
         var stageStart = sleeper.now
@@ -203,7 +209,9 @@ public actor WorkflowRunner {
             let after = try await reporter.measureSet(.withoutVerification, target: ctx.target, onReading: onReading)
 
             stage(6)
-            let verification = try await reporter.measureSet(.verificationOnly, target: ctx.target, onReading: onReading)
+            // The verification run measures no primaries, so it judges against the native gamut measured just before.
+            let verification = try await reporter.measureSet(
+                .verificationOnly, target: ctx.target, nativeGamut: after.nativeGamut(for: ctx.target), onReading: onReading)
             durations[Self.stages[6]] = sleeper.now.timeIntervalSince(stageStart)
 
             let failures = profile.tolerances.failures(after) + profile.tolerances.failures(verification)
@@ -225,11 +233,12 @@ public actor WorkflowRunner {
             if let restorePoint {
                 let record = log.snapshot
                 let tv = devices.tv
+                let calibrationTimeout = calibrationTimeout
                 // A fresh task: restoring must not inherit the cancellation that ended the run.
                 note = await Task {
                     await Self.restore(
                         restorePoint, profile: profile, tv: tv, lutsUploaded: !record.uploads.isEmpty,
-                        calibrationOpen: record.calibrationOpen, timeout: timeout)
+                        calibrationOpen: record.calibrationOpen, timeout: timeout, calibrationTimeout: calibrationTimeout)
                 }.value
             }
             s.status = cancelled ? .cancelled : .failed
@@ -257,21 +266,22 @@ public actor WorkflowRunner {
     /// Writes back every snapshot setting that differs now; closes an open CAL session; optionally resets LUTs.
     static func restore(
         _ point: RestorePoint, profile: SessionProfile, tv: any TVController, lutsUploaded: Bool,
-        calibrationOpen: Bool, timeout: Duration
+        calibrationOpen: Bool, timeout: Duration, calibrationTimeout: Duration
     ) async -> String {
         let mode = point.settings.pictureMode
         do {
-            if calibrationOpen { try? await withTimeout(timeout, "TV") { try await tv.sendCalibration(.end(pictureMode: mode)) } }
+            if calibrationOpen {
+                try? await withTimeout(calibrationTimeout, "TV") { try await tv.sendCalibration(.end(pictureMode: mode)) }
+            }
             let current = try await withTimeout(timeout, "TV") { try await tv.readPictureSettings(pictureMode: mode) }
             let changes = point.settings.values.filter { current.values[$0.key] != $0.value }
             if !changes.isEmpty { try await withTimeout(timeout, "TV") { try await tv.writePictureSettings(changes) } }
             var note = "Restored \(changes.count) picture setting(s) of \(mode) from the \(RestorePoint.label)."
             if lutsUploaded {
                 if profile.restoreLUTsOnCancel {
-                    for command in [
-                        CalibrationCommand.start(pictureMode: mode), .resetCalibration(pictureMode: mode), .end(pictureMode: mode),
-                    ] {
-                        try await withTimeout(timeout, "TV") { try await tv.sendCalibration(command) }
+                    // No start…end bracket here: a failed reset inside one would leave the TV in calibration mode.
+                    try await withTimeout(calibrationTimeout, "TV") {
+                        try await tv.sendCalibration(.resetCalibration(pictureMode: mode))
                     }
                     note += " Reset the internal calibration of \(mode) to defaults."
                 } else {

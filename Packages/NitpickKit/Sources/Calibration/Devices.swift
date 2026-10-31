@@ -1,5 +1,5 @@
-import Foundation
 import ColorScience
+import Foundation
 import PatternLink
 
 /// Static facts about a connected meter.
@@ -12,8 +12,11 @@ public struct MeterInfo: Hashable, Codable, Sendable {
     public var isSimulated: Bool
 
     public init(model: String, serialNumber: String, firmware: String? = nil, maximumLuminance: Double, isSimulated: Bool = false) {
-        self.model = model; self.serialNumber = serialNumber; self.firmware = firmware
-        self.maximumLuminance = maximumLuminance; self.isSimulated = isSimulated
+        self.model = model
+        self.serialNumber = serialNumber
+        self.firmware = firmware
+        self.maximumLuminance = maximumLuminance
+        self.isSimulated = isSimulated
     }
 }
 
@@ -53,11 +56,18 @@ public struct TVCapabilities: Hashable, Codable, Sendable {
     public var supportsGamutMatrix: Bool
     public var isSimulated: Bool
 
-    public init(modelName: String, firmwareVersion: String, webOSVersion: String? = nil, inputs: [TVInput],
-                supportsCalibrationAPI: Bool, lut3DSize: Int = 33, supportsGamutMatrix: Bool = true, isSimulated: Bool = false) {
-        self.modelName = modelName; self.firmwareVersion = firmwareVersion; self.webOSVersion = webOSVersion; self.inputs = inputs
-        self.supportsCalibrationAPI = supportsCalibrationAPI; self.lut3DSize = lut3DSize
-        self.supportsGamutMatrix = supportsGamutMatrix; self.isSimulated = isSimulated
+    public init(
+        modelName: String, firmwareVersion: String, webOSVersion: String? = nil, inputs: [TVInput],
+        supportsCalibrationAPI: Bool, lut3DSize: Int = 33, supportsGamutMatrix: Bool = true, isSimulated: Bool = false
+    ) {
+        self.modelName = modelName
+        self.firmwareVersion = firmwareVersion
+        self.webOSVersion = webOSVersion
+        self.inputs = inputs
+        self.supportsCalibrationAPI = supportsCalibrationAPI
+        self.lut3DSize = lut3DSize
+        self.supportsGamutMatrix = supportsGamutMatrix
+        self.isSimulated = isSimulated
     }
 }
 
@@ -66,7 +76,11 @@ public struct TVInput: Hashable, Codable, Sendable, Identifiable {
     public var id: String
     public var label: String
     public var isConnected: Bool
-    public init(id: String, label: String, isConnected: Bool) { self.id = id; self.label = label; self.isConnected = isConnected }
+    public init(id: String, label: String, isConnected: Bool) {
+        self.id = id
+        self.label = label
+        self.isConnected = isConnected
+    }
 }
 
 /// A snapshot of picture settings. Keys are webOS settings keys (e.g. "pictureMode", "backlight", "whiteBalanceRedGain").
@@ -77,7 +91,9 @@ public struct PictureSettings: Hashable, Codable, Sendable {
     public var capturedAt: Date
 
     public init(pictureMode: String, values: [String: JSONValue], capturedAt: Date = Date()) {
-        self.pictureMode = pictureMode; self.values = values; self.capturedAt = capturedAt
+        self.pictureMode = pictureMode
+        self.values = values
+        self.capturedAt = capturedAt
     }
 
     public func int(_ key: String) -> Int? { values[key]?.intValue }
@@ -106,13 +122,21 @@ public enum JSONValue: Hashable, Codable, Sendable {
 
     public init(from decoder: Decoder) throws {
         let c = try decoder.singleValueContainer()
-        if c.decodeNil() { self = .null }
-        else if let b = try? c.decode(Bool.self) { self = .bool(b) }
-        else if let d = try? c.decode(Double.self) { self = .number(d) }
-        else if let s = try? c.decode(String.self) { self = .string(s) }
-        else if let a = try? c.decode([JSONValue].self) { self = .array(a) }
-        else if let o = try? c.decode([String: JSONValue].self) { self = .object(o) }
-        else { throw DecodingError.dataCorruptedError(in: c, debugDescription: "Unsupported JSON value") }
+        if c.decodeNil() {
+            self = .null
+        } else if let b = try? c.decode(Bool.self) {
+            self = .bool(b)
+        } else if let d = try? c.decode(Double.self) {
+            self = .number(d)
+        } else if let s = try? c.decode(String.self) {
+            self = .string(s)
+        } else if let a = try? c.decode([JSONValue].self) {
+            self = .array(a)
+        } else if let o = try? c.decode([String: JSONValue].self) {
+            self = .object(o)
+        } else {
+            throw DecodingError.dataCorruptedError(in: c, debugDescription: "Unsupported JSON value")
+        }
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -137,22 +161,32 @@ public struct ToneMapParameters: Hashable, Codable, Sendable {
     /// Roll-off start as a percentage of the display peak.
     public var rolloffPoint: Int
     public init(displayLuminance: Int, masteringPeak: Int, rolloffPoint: Int) {
-        self.displayLuminance = displayLuminance; self.masteringPeak = masteringPeak; self.rolloffPoint = rolloffPoint
+        self.displayLuminance = displayLuminance
+        self.masteringPeak = masteringPeak
+        self.rolloffPoint = rolloffPoint
     }
 }
 
 /// Dolby Vision "golden reference" display configuration uploaded to the TV.
 public struct DolbyVisionConfig: Hashable, Codable, Sendable {
-    public var whiteLevel: Double   // cd/m²
-    public var blackLevel: Double   // cd/m²
+    public var whiteLevel: Double  // cd/m²
+    public var blackLevel: Double  // cd/m²
     public var gamma: Double
     public var red: Chromaticity
     public var green: Chromaticity
     public var blue: Chromaticity
     public var white: Chromaticity
-    public init(whiteLevel: Double, blackLevel: Double, gamma: Double, red: Chromaticity, green: Chromaticity, blue: Chromaticity, white: Chromaticity) {
-        self.whiteLevel = whiteLevel; self.blackLevel = blackLevel; self.gamma = gamma
-        self.red = red; self.green = green; self.blue = blue; self.white = white
+    public init(
+        whiteLevel: Double, blackLevel: Double, gamma: Double, red: Chromaticity, green: Chromaticity, blue: Chromaticity,
+        white: Chromaticity
+    ) {
+        self.whiteLevel = whiteLevel
+        self.blackLevel = blackLevel
+        self.gamma = gamma
+        self.red = red
+        self.green = green
+        self.blue = blue
+        self.white = white
     }
 }
 
@@ -163,10 +197,11 @@ public enum CalibrationCommand: Hashable, Sendable {
     case end(pictureMode: String)
     case upload1DLUT(LUT1D, pictureMode: String)
     case upload3DLUT(LUT3D, colorimetry: Colorimetry, pictureMode: String)
-    case setGamutMatrix([Double], colorimetry: Colorimetry, pictureMode: String)   // 9 values, row-major
+    case setGamutMatrix([Double], colorimetry: Colorimetry, pictureMode: String)  // 9 values, row-major
     case setToneMap(ToneMapParameters, pictureMode: String)
     case setDolbyVisionConfig(DolbyVisionConfig, pictureMode: String)
-    /// Restores unity LUTs / default calibration data for the mode (LG "ddc reset").
+    /// Restores unity LUTs / default calibration data for the mode (LG "ddc reset"). Inside an open session it must
+    /// name that session's mode; outside one the controller opens (and always closes) a session if the TV needs one.
     case resetCalibration(pictureMode: String)
 }
 

@@ -1,9 +1,10 @@
 import Foundation
 
-/// webOS picture-setting keys the engine reads and writes. Where the real LG key is not known for certain the name
-/// is our choice and the simulated TV uses the same one; `LGTVController` maps them to the wire names.
+/// webOS picture-setting keys the engine reads and writes. All are LG's own keys except `twentyPoint`, which
+/// `LGTVController` maps onto LG's 22/24-point arrays.
 ///
-/// Value conventions (as the simulated TV validates them):
+/// Value conventions (as the simulated TV validates them; LG's own domains for `gamma` and `colorTemperature` differ —
+/// see `LGPictureKeys.rules` — and the engine never writes those two):
 /// - `backlight` (OLED light), `contrast`, `brightness`, `color`: integers 0…100 (contrast default 85, others 50).
 /// - `gamma`: "low" (1.9), "medium" (2.2), "high1" (2.4), "high2" (2.6), "bt1886" — SDR modes only.
 /// - `colorTemperature`: "warm0"…"warm50", "cool0"…"cool50" or "medium"; "warm50" ≈ D65 in expert modes.
@@ -29,10 +30,13 @@ public enum PictureKey {
 
     /// 20 × [red, green, blue] (index = ire / 5 − 1) as the TV's JSON.
     public static func encodeTwentyPoint(_ values: [[Int]]) -> JSONValue {
-        .array(zip(twentyPointIRE, values).map { ire, rgb in
-            .object(["ire": .number(Double(ire)), "red": .number(Double(rgb[0])),
-                     "green": .number(Double(rgb[1])), "blue": .number(Double(rgb[2]))])
-        })
+        .array(
+            zip(twentyPointIRE, values).map { ire, rgb in
+                .object([
+                    "ire": .number(Double(ire)), "red": .number(Double(rgb[0])),
+                    "green": .number(Double(rgb[1])), "blue": .number(Double(rgb[2])),
+                ])
+            })
     }
 
     /// Inverse of `encodeTwentyPoint`; nil unless it is exactly 20 entries covering every IRE once with integer channels.
@@ -41,7 +45,8 @@ public enum PictureKey {
         var out = [[Int]](repeating: [], count: 20)
         for entry in entries {
             guard case .object(let o) = entry, let ire = o["ire"]?.intValue, ire % 5 == 0, (5...100).contains(ire),
-                  out[ire / 5 - 1].isEmpty else { return nil }
+                out[ire / 5 - 1].isEmpty
+            else { return nil }
             let channels = ["red", "green", "blue"].compactMap { key -> Int? in
                 guard let d = o[key]?.doubleValue, d == d.rounded() else { return nil }
                 return Int(d)

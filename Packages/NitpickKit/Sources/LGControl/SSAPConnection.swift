@@ -220,15 +220,18 @@ public actor SSAPConnection {
         try? await write(["id": Double(key).map(JSON.number) ?? .string(key), "type": "unsubscribe"])
     }
 
-    private func handle(_ data: Data) {
-        guard let frame = try? JSON.decode(data), let rawID = frame["id"] else { return }
-        let id: String
-        switch rawID {
-        case .number(let n): id = String(Int(n))
-        case .string(let s): id = s
-        default: return
+    /// The pending-request key of a frame `id`; nil for ids no request uses (a non-integral or huge number would
+    /// otherwise trap in `Int(_:)`).
+    static func key(_ id: JSON?) -> String? {
+        switch id {
+        case .number(let n)?: Int(exactly: n).map(String.init)
+        case .string(let s)?: s
+        default: nil
         }
-        guard let entry = pending[id] else { return }
+    }
+
+    private func handle(_ data: Data) {
+        guard let frame = try? JSON.decode(data), let id = Self.key(frame["id"]), let entry = pending[id] else { return }
         let type = frame["type"]?.stringValue
         if entry.isRegister {
             if type == "registered" { return finish(id, .success(frame)) }

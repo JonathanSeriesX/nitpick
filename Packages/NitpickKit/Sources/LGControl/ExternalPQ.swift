@@ -20,16 +20,21 @@ public enum LGPicMode: String, Sendable, CaseIterable {
         return .sdr
     }
 
+    /// `pictureMode` setting value → bank.
+    static let banks: [String: LGPicMode] = [
+        "cinema": .cinema, "expert1": .expert1, "expert2": .expert2, "game": .game, "filmMaker": .filmMaker,
+        "technicolor": .technicolorExpert, "hdrCinema": .hdrCinema, "hdrGame": .hdrGame, "hdrFilmMaker": .hdrFilmMaker,
+        "dolbyHdrCinemaBright": .dolbyCinemaBright, "dolbyHdrCinema": .dolbyCinemaDark, "dolbyHdrGame": .dolbyGame,
+    ]
+
     /// From a `pictureMode` setting value; nil for modes without a calibration bank (vivid, normal, eco, …).
     public init?(pictureMode: String) {
-        let map: [String: LGPicMode] = [
-            "cinema": .cinema, "expert1": .expert1, "expert2": .expert2, "game": .game, "filmMaker": .filmMaker,
-            "technicolor": .technicolorExpert, "hdrCinema": .hdrCinema, "hdrGame": .hdrGame, "hdrFilmMaker": .hdrFilmMaker,
-            "dolbyHdrCinemaBright": .dolbyCinemaBright, "dolbyHdrCinema": .dolbyCinemaDark, "dolbyHdrGame": .dolbyGame,
-        ]
-        guard let mode = map[pictureMode] else { return nil }
+        guard let mode = Self.banks[pictureMode] else { return nil }
         self = mode
     }
+
+    /// The `pictureMode` setting value that selects this bank (`hdr_cinema` → `hdrCinema`); nil when unknown.
+    public var pictureModeSetting: String? { Self.banks.first { $0.value == self }?.key }
 
     /// `PictureMode = N` in the Dolby Vision config: 1 Cinema Home, 2 Cinema/FILMMAKER, 4 Game.
     public var dolbyConfigIndex: Int? {

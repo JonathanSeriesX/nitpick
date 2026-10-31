@@ -52,6 +52,24 @@ import Testing
         await fake.stop()
     }
 
+    /// A store that cannot read (locked Keychain) must stop pairing, not fall back to trust-on-first-use.
+    @Test func unreadableCredentialStoreFailsLoudly() async throws {
+        struct Unreadable: TVCredentialStore {
+            struct Locked: Error {}
+            func credentials(for tvID: String) throws -> TVCredentials? { throw Locked() }
+            func save(_ credentials: TVCredentials, for tvID: String) {}
+            func remove(tvID: String) {}
+        }
+        let fake = FakeWebOSServer()
+        let port = try await fake.start()
+        let tv = LGTV(
+            credentials: Unreadable(), options: .init(connection: .init(port: port, allowInsecure: true), promptTimeout: .seconds(3)))
+        await #expect(throws: Unreadable.Locked.self) { try await tv.connect(host: "127.0.0.1", id: Self.tvID) }
+        await #expect(throws: Unreadable.Locked.self) { try await tv.connect(host: "127.0.0.1") }
+        #expect(await fake.requests.allSatisfy { $0["type"] != "register" }, "no pairing attempt without the pinned state")
+        await fake.stop()
+    }
+
     @Test func declinedPromptIsPairingDenied() async throws {
         let store = InMemoryTVCredentialStore()
         let (fake, tv) = try await makeTV(.init(pairing: .deny(after: .milliseconds(20))), store: store)

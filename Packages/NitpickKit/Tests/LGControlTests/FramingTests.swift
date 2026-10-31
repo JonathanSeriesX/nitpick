@@ -31,6 +31,12 @@ import Testing
         #expect(driver?.serverCode == 20)
     }
 
+    @Test func frameIDsFromTheTVNeverTrap() {
+        #expect(SSAPConnection.key(.number(7)) == "7" && SSAPConnection.key(.string("register_0")) == "register_0")
+        #expect(SSAPConnection.key(.number(1e300)) == nil && SSAPConnection.key(.number(2.5)) == nil)
+        #expect(SSAPConnection.key(.bool(true)) == nil && SSAPConnection.key(nil) == nil)
+    }
+
     @Test func framesCarryMonotonicIDsAndEchoMatching() async throws {
         let (fake, tv) = try await makeTV()
         try await tv.connect(host: "127.0.0.1")
@@ -114,6 +120,13 @@ import Testing
             return
         }
         silent.stop()
+    }
+
+    @Test(.timeLimit(.minutes(1))) func stateStreamFinishesWhenTheClientGoesAway() async {
+        var tv: LGTV? = LGTV(credentials: InMemoryTVCredentialStore())
+        let states = tv!.state
+        tv = nil
+        for await _ in states {}  // returns only once the stream is finished
     }
 
     @Test func droppedSocketReportsDisconnected() async throws {

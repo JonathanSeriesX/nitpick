@@ -33,11 +33,14 @@ public actor LGCalibration {
 
     /// Enters calibration mode for `picMode`. The TV must already show that picture mode with a matching signal
     /// (SDR / HDR10 / Dolby Vision in relative mode). `CAL_START` forces Warm 50 and `colorGamut` `wide`.
-    /// After a timeout `CAL_END` is sent on the same socket; after an explicit rejection it is not (SPEC §5.4).
+    /// After a timeout `CAL_END` is sent on the same socket; after an explicit rejection it is not (SPEC §5.4). After a
+    /// cancellation the session stays open (the TV may be in calibration mode) until `end()`.
     public func start(_ picMode: LGPicMode, form: CalStartForm = .automatic) async throws {
         guard session == nil else {
             throw LGError.invalidPayload("calibration session for \(session!.rawValue) still open; call end() first")
         }
+        // Cancelled before anything was sent: no session, so no stray CAL_END can close another client's (SPEC §5.4).
+        try Task.checkCancellation()
         let forms: [CalStartForm] = form == .automatic ? [.noData, .zeroFloats] : [form]
         for (attempt, f) in forms.enumerated() {
             var payload = envelope(.calStart, picMode)
@@ -52,6 +55,10 @@ public actor LGCalibration {
                 throw LGError.timeout(what)
             } catch let error as LGError where error.serverCode == 500 && attempt + 1 < forms.count {
                 continue
+            } catch is CancellationError {
+                // CAL_START may have reached the TV: keep the session so `end()` (from an uncancelled task) can close it.
+                session = picMode
+                throw CancellationError()
             }
         }
     }

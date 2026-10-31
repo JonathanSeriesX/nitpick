@@ -102,6 +102,20 @@ import Testing
         await fake.stop()
     }
 
+    @Test func cancelledStartSendsNothingAndOpensNothing() async throws {
+        let (fake, _, cal) = try await connected()
+        let cancelled = Task {
+            withUnsafeCurrentTask { $0?.cancel() }
+            try await cal.start(.expert2)
+        }
+        await #expect(throws: CancellationError.self) { try await cancelled.value }
+        #expect(await cal.session == nil)
+        #expect(await pqCommands(fake).isEmpty)
+        try await cal.start(.expert2)
+        try await cal.end()
+        await fake.stop()
+    }
+
     @Test func toneMapNeedsHDR10Session() async throws {
         let (sdrFake, _, sdr) = try await connected()
         try await sdr.start(.expert2)

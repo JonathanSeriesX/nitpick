@@ -1,14 +1,20 @@
-import Foundation
-import Testing
-import Synchronization
 import ColorScience
+import Foundation
 import PatternLink
+import Synchronization
+import Testing
+
 @testable import Calibration
 
 final class Counter: Sendable {
     private let value = Mutex(0)
     /// Increments and returns the new value.
-    func next() -> Int { value.withLock { $0 += 1; return $0 } }
+    func next() -> Int {
+        value.withLock {
+            $0 += 1
+            return $0
+        }
+    }
 }
 
 @Suite struct RecoveryTests {
@@ -66,6 +72,23 @@ final class Counter: Sendable {
         #expect(failure.contains("TV did not respond in time"))
         #expect(failure.contains("Nothing on the TV was changed"))
         #expect(elapsed < .seconds(2), "took \(elapsed)")
+    }
+
+    /// A failed upload inside CAL_START…CAL_END: restore closes the session, then resets the LUTs of the mode.
+    @Test func failedUploadClosesSessionAndResetsLUTs() async throws {
+        let rig = Rig(seed: 24)
+        var profile = SessionProfile.movieSDR
+        profile.restoreLUTsOnCancel = true
+        profile.cubeSize = 9  // the TV takes 17 or 33 only: the 3D LUT upload fails after the 1D LUT went in
+        let events = try await runWorkflow(WorkflowRunner(), profile, rig)
+        let failure = try #require(events.failure)
+        #expect(failure.contains("3D LUT size") && failure.contains("Reset the internal calibration of expert1"))
+        #expect(rig.panel.calibration(for: "expert1").isEmpty)
+        let calls = rig.tv.commandLog.filter { $0.hasPrefix("sendCalibration") }
+        #expect(
+            calls.suffix(3) == [
+                "sendCalibration upload3DLUT bt709 expert1", "sendCalibration end expert1", "sendCalibration resetCalibration expert1",
+            ])
     }
 
     @Test func matchContentOffFailsWithInstructions() async throws {

@@ -47,6 +47,7 @@ import Testing
         #expect(try WakeOnLAN.packet(mac: "A8-23-FE-00-11-22") == p && WakeOnLAN.packet(mac: "a823fe001122") == p)
         #expect(throws: LGError.self) { try WakeOnLAN.packet(mac: "a8:23:fe:00:11") }
         #expect(throws: LGError.self) { try WakeOnLAN.packet(mac: "zz:23:fe:00:11:22") }
+        #expect(try WakeOnLAN.packet(mac: "ａ８:２３:ｆｅ:００:１１:２２") == p, "full-width digits are hex digits too")
     }
 
     @Test func wakeOnLANSendsThreeCopies() async throws {

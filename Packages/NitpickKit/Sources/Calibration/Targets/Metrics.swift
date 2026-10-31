@@ -1,11 +1,14 @@
-import Foundation
 import ColorScience
+import Foundation
 
 /// Difference between a measured and a reference colour. All XYZ absolute (cd/m²).
 public struct ColorError: Codable, Hashable, Sendable {
     public enum Flag: String, Codable, Hashable, Sendable {
         /// HDR grayscale above the expected roll-off knee: reported against a modelled reference, never judged.
         case inRollOff
+        /// Colour target outside the display's measured native gamut: reported against the gamut-clipped reference
+        /// (`Metrics.gamutClipped`), never judged.
+        case outOfGamut
     }
 
     /// CIEDE2000 relative to `CalibrationTarget.referenceWhite`.
@@ -21,6 +24,7 @@ public struct ColorError: Codable, Hashable, Sendable {
     public var flags: Set<Flag>
 
     public var inRollOff: Bool { flags.contains(.inRollOff) }
+    public var outOfGamut: Bool { flags.contains(.outOfGamut) }
 
     /// The judged metric: ΔE ITP for HDR targets, ΔE2000 for SDR.
     public func value(hdr: Bool) -> Double { hdr ? deltaEITP : deltaE2000 }
@@ -61,6 +65,40 @@ public enum Metrics {
         }
     }
 
+    /// `reference` desaturated at constant luminance onto the edge of the `gamut` triangle, along the xy line toward
+    /// `gamut.white` (mixing with the equal-luminance white moves along that line). Nil when the reference is inside the
+    /// triangle, black, or `gamut.white` is not inside it.
+    public static func gamutClipped(_ reference: XYZ, gamut: ColorSpacePrimaries) -> XYZ? {
+        let c = reference.chromaticity
+        let w = gamut.white
+        guard reference.Y > 0, !gamut.contains(c), gamut.contains(w) else { return nil }
+        func cross(_ ax: Double, _ ay: Double, _ bx: Double, _ by: Double) -> Double { ax * by - ay * bx }
+        let dx = c.x - w.x
+        let dy = c.y - w.y
+        var exit: Double?
+        for (a, b) in [(gamut.red, gamut.green), (gamut.green, gamut.blue), (gamut.blue, gamut.red)] {
+            let ex = b.x - a.x
+            let ey = b.y - a.y
+            let denominator = cross(dx, dy, ex, ey)
+            guard denominator != 0 else { continue }
+            let t = cross(a.x - w.x, a.y - w.y, ex, ey) / denominator
+            let s = cross(a.x - w.x, a.y - w.y, dx, dy) / denominator
+            if (0...1).contains(s), t >= 0, t < exit ?? .infinity { exit = t }
+        }
+        guard let t = exit else { return nil }
+        return Chromaticity(x: w.x + t * dx, y: w.y + t * dy).xyz(Y: reference.Y)
+    }
+
+    /// The display's native gamut: the measured 100 % container primaries ("Red 100%", …) with the target white.
+    /// HDR only: the BT.2020 container primaries drive the panel to its limits, while SDR container primaries are the
+    /// target itself and cannot tell a narrow panel from a miscalibrated one. Nil when they were not measured.
+    static func nativeGamut(_ patches: [(name: String, xyz: XYZ)], target: CalibrationTarget) -> ColorSpacePrimaries? {
+        guard target.isHDR else { return nil }
+        func xy(_ name: String) -> Chromaticity? { patches.first { $0.name == "\(name) 100%" }?.xyz.chromaticity }
+        guard let red = xy("Red"), let green = xy("Green"), let blue = xy("Blue") else { return nil }
+        return ColorSpacePrimaries(red: red, green: green, blue: blue, white: target.whitePoint)
+    }
+
     /// Nearest-rank percentile (p in 0…100) of `values`; 0 for an empty list.
     public static func percentile(_ values: [Double], _ p: Double) -> Double {
         guard !values.isEmpty else { return 0 }
@@ -89,7 +127,7 @@ public struct ColorPatchResult: Codable, Hashable, Sendable {
 /// Every metric of a measurement run. Judged values use ΔE ITP for HDR and ΔE2000 for SDR.
 public struct Summary: Codable, Hashable, Sendable {
     /// Colour patches (SDR: primaries/secondaries, sweeps, verification; HDR: sweeps, verification — HDR primaries are
-    /// BT.2020 container limits, reported only).
+    /// BT.2020 container limits, reported only). Patches flagged `.outOfGamut` are excluded.
     public var averageDeltaE: Double
     public var maxDeltaE: Double
     public var p95DeltaE: Double
@@ -119,17 +157,24 @@ public struct MeasurementSet: Codable, Hashable, Sendable {
     public var blackLevel: Double
     public var summary: Summary
 
-    public init(dynamicRange: DynamicRange, grayscale: [GrayscalePoint] = [], primariesSecondaries: [ColorPatchResult] = [],
-                saturationSweeps: [ColorPatchResult] = [], verificationPatches: [ColorPatchResult] = [], nearBlack: [GrayscalePoint] = [],
-                peakLuminance: Double = 0, blackLevel: Double = 0) {
-        self.dynamicRange = dynamicRange; self.grayscale = grayscale; self.primariesSecondaries = primariesSecondaries
-        self.saturationSweeps = saturationSweeps; self.verificationPatches = verificationPatches; self.nearBlack = nearBlack
-        self.peakLuminance = peakLuminance; self.blackLevel = blackLevel
+    public init(
+        dynamicRange: DynamicRange, grayscale: [GrayscalePoint] = [], primariesSecondaries: [ColorPatchResult] = [],
+        saturationSweeps: [ColorPatchResult] = [], verificationPatches: [ColorPatchResult] = [], nearBlack: [GrayscalePoint] = [],
+        peakLuminance: Double = 0, blackLevel: Double = 0
+    ) {
+        self.dynamicRange = dynamicRange
+        self.grayscale = grayscale
+        self.primariesSecondaries = primariesSecondaries
+        self.saturationSweeps = saturationSweeps
+        self.verificationPatches = verificationPatches
+        self.nearBlack = nearBlack
+        self.peakLuminance = peakLuminance
+        self.blackLevel = blackLevel
         let hdr = dynamicRange != .sdr
         let judgedGray = grayscale.filter { $0.stimulus >= 0.049 && !$0.error.inRollOff }
         let grayDE = judgedGray.map { $0.error.value(hdr: hdr) }
         let tracked = judgedGray.filter { $0.stimulus >= 0.099 }.map { abs($0.error.luminanceErrorPercent) }
-        let colors = (hdr ? [] : primariesSecondaries) + saturationSweeps + verificationPatches
+        let colors = ((hdr ? [] : primariesSecondaries) + saturationSweeps + verificationPatches).filter { !$0.error.outOfGamut }
         let colorDE = colors.map { $0.error.value(hdr: hdr) }
         let gammas = grayscale.filter { (0.099...0.901).contains($0.stimulus) }.compactMap(\.gamma)
         let white = judgedGray.max { $0.reading.luminance < $1.reading.luminance }
@@ -143,6 +188,13 @@ public struct MeasurementSet: Codable, Hashable, Sendable {
             maxLuminanceErrorPercent: tracked.max() ?? 0,
             contrastRatio: blackLevel > 0 ? peakLuminance / blackLevel : nil,
             whitePointCCT: white?.cct ?? 0)
+    }
+}
+
+extension MeasurementSet {
+    /// The native gamut from this set's measured primaries (see `Metrics.nativeGamut`); nil for SDR or when unmeasured.
+    public func nativeGamut(for target: CalibrationTarget) -> ColorSpacePrimaries? {
+        Metrics.nativeGamut(primariesSecondaries.map { ($0.name, $0.error.measured) }, target: target)
     }
 }
 
@@ -166,7 +218,9 @@ public struct Tolerances: Codable, Hashable, Sendable {
         func check(_ value: Double, _ limit: Double, _ name: String) {
             if value > limit { out.append(String(format: "%@ %.2f > %.2f", name, value, limit)) }
         }
-        let hasColors = !set.saturationSweeps.isEmpty || !set.verificationPatches.isEmpty || (!set.primariesSecondaries.isEmpty && set.dynamicRange == .sdr)
+        let hasColors =
+            !set.saturationSweeps.isEmpty || !set.verificationPatches.isEmpty
+            || (!set.primariesSecondaries.isEmpty && set.dynamicRange == .sdr)
         if set.dynamicRange == .sdr {
             if !set.grayscale.isEmpty {
                 check(s.grayscaleMaxDeltaE, grayscaleMax, "grayscale max ΔE2000")

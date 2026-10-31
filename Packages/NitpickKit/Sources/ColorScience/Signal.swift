@@ -77,16 +77,23 @@ public struct SignalFormat: Hashable, Codable, Sendable {
     public var whiteCode: Int { range == .limited ? 235 << (bitDepth.rawValue - 8) : (1 << bitDepth.rawValue) - 1 }
     /// Legal code range (10-bit limited video excludes 0–3 and 1020–1023, which are timing references).
     public var legalCodes: ClosedRange<Int> {
-        range == .limited ? (1 << (bitDepth.rawValue - 8))...((1 << bitDepth.rawValue) - 1 - (1 << (bitDepth.rawValue - 8)))
-                          : 0...((1 << bitDepth.rawValue) - 1)
+        range == .limited
+            ? (1 << (bitDepth.rawValue - 8))...((1 << bitDepth.rawValue) - 1 - (1 << (bitDepth.rawValue - 8)))
+            : 0...((1 << bitDepth.rawValue) - 1)
     }
     /// Achromatic chroma code (512 for 10-bit).
     public var chromaZeroCode: Int { 1 << (bitDepth.rawValue - 1) }
 
     /// Quantises a normalised signal (0 = reference black, 1 = reference white) to a legal code value.
+    /// Any input is safe: super-white, sub-black and ±∞ clamp to `legalCodes`, NaN gives reference black.
     public func code(forSignal v: Double) -> Int {
-        let c = (Double(blackCode) + v * Double(whiteCode - blackCode)).rounded()
-        return Swift.min(Swift.max(Int(c), legalCodes.lowerBound), legalCodes.upperBound)
+        legalCode(Double(blackCode) + v * Double(whiteCode - blackCode), ifNaN: blackCode)
+    }
+
+    /// `code` rounded and clamped to `legalCodes` before the integer conversion, which traps on huge values.
+    func legalCode(_ code: Double, ifNaN fallback: Int) -> Int {
+        guard !code.isNaN else { return fallback }
+        return Int(Swift.min(Swift.max(code.rounded(), Double(legalCodes.lowerBound)), Double(legalCodes.upperBound)))
     }
 
     /// Normalised signal for a code value (may fall outside 0…1 for sub-black / super-white codes).
@@ -102,7 +109,11 @@ public struct SignalRGB: Hashable, Codable, Sendable {
     public var g: Double
     public var b: Double
 
-    public init(r: Double, g: Double, b: Double) { self.r = r; self.g = g; self.b = b }
+    public init(r: Double, g: Double, b: Double) {
+        self.r = r
+        self.g = g
+        self.b = b
+    }
     public init(gray v: Double) { self.init(r: v, g: v, b: v) }
     public init(_ rgb: RGB) { self.init(r: rgb.r, g: rgb.g, b: rgb.b) }
 
@@ -145,25 +156,35 @@ public struct HDR10StaticMetadata: Hashable, Codable, Sendable {
     /// MaxFALL in cd/m²; 0 = unknown.
     public var maxFrameAverageLightLevel: Int
 
-    public init(red: Chromaticity, green: Chromaticity, blue: Chromaticity, white: Chromaticity = .d65,
-                maxMasteringLuminance: Double, minMasteringLuminance: Double = 0.0001,
-                maxContentLightLevel: Int = 0, maxFrameAverageLightLevel: Int = 0) {
-        self.red = red; self.green = green; self.blue = blue; self.white = white
+    public init(
+        red: Chromaticity, green: Chromaticity, blue: Chromaticity, white: Chromaticity = .d65,
+        maxMasteringLuminance: Double, minMasteringLuminance: Double = 0.0001,
+        maxContentLightLevel: Int = 0, maxFrameAverageLightLevel: Int = 0
+    ) {
+        self.red = red
+        self.green = green
+        self.blue = blue
+        self.white = white
         self.maxMasteringLuminance = maxMasteringLuminance
         self.minMasteringLuminance = minMasteringLuminance
         self.maxContentLightLevel = maxContentLightLevel
         self.maxFrameAverageLightLevel = maxFrameAverageLightLevel
     }
 
-    public static let p3D65 = (red: Chromaticity(x: 0.680, y: 0.320), green: Chromaticity(x: 0.265, y: 0.690), blue: Chromaticity(x: 0.150, y: 0.060))
+    public static let p3D65 = (
+        red: Chromaticity(x: 0.680, y: 0.320), green: Chromaticity(x: 0.265, y: 0.690), blue: Chromaticity(x: 0.150, y: 0.060)
+    )
 
     /// P3-D65 mastering display, 1000 nits, MaxCLL 1000 / MaxFALL 400 — the most common consumer HDR10 metadata.
-    public static let p3D65_1000 = HDR10StaticMetadata(red: p3D65.red, green: p3D65.green, blue: p3D65.blue,
-                                                       maxMasteringLuminance: 1000, maxContentLightLevel: 1000, maxFrameAverageLightLevel: 400)
+    public static let p3D65_1000 = HDR10StaticMetadata(
+        red: p3D65.red, green: p3D65.green, blue: p3D65.blue,
+        maxMasteringLuminance: 1000, maxContentLightLevel: 1000, maxFrameAverageLightLevel: 400)
     /// P3-D65 mastering display, 4000 nits.
-    public static let p3D65_4000 = HDR10StaticMetadata(red: p3D65.red, green: p3D65.green, blue: p3D65.blue,
-                                                       maxMasteringLuminance: 4000, maxContentLightLevel: 4000, maxFrameAverageLightLevel: 1000)
+    public static let p3D65_4000 = HDR10StaticMetadata(
+        red: p3D65.red, green: p3D65.green, blue: p3D65.blue,
+        maxMasteringLuminance: 4000, maxContentLightLevel: 4000, maxFrameAverageLightLevel: 1000)
     /// BT.2020 mastering display, 10 000 nits (exercises the TV's full tone-mapping range).
-    public static let bt2020_10000 = HDR10StaticMetadata(red: Chromaticity(x: 0.708, y: 0.292), green: Chromaticity(x: 0.170, y: 0.797), blue: Chromaticity(x: 0.131, y: 0.046),
-                                                         maxMasteringLuminance: 10000, maxContentLightLevel: 10000, maxFrameAverageLightLevel: 4000)
+    public static let bt2020_10000 = HDR10StaticMetadata(
+        red: Chromaticity(x: 0.708, y: 0.292), green: Chromaticity(x: 0.170, y: 0.797), blue: Chromaticity(x: 0.131, y: 0.046),
+        maxMasteringLuminance: 10000, maxContentLightLevel: 10000, maxFrameAverageLightLevel: 4000)
 }

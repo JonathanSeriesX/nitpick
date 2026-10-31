@@ -108,6 +108,8 @@ public actor LGTV {
         (state, stateSink) = AsyncStream.makeStream()
     }
 
+    deinit { stateSink.finish() }
+
     // MARK: - Connection
 
     /// Connects and pairs (the TV may show its prompt: `state` yields `.pairing`).

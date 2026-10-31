@@ -1,5 +1,5 @@
-import Foundation
 import ColorScience
+import Foundation
 
 /// A measurement window: a centred rectangle covering `areaFraction` of the screen area (0.10 = "10 % window").
 public struct WindowSpec: Hashable, Codable, Sendable {
@@ -24,8 +24,9 @@ public struct WindowSpec: Hashable, Codable, Sendable {
         let scale = areaFraction.clamped(to: 0.0001...1).squareRoot()
         let w = max(2, Int((Double(width) * scale).rounded()) & ~1)
         let h = max(2, Int((Double(height) * scale).rounded()) & ~1)
-        let x = min(max(Int((Double(width) * centerX).rounded()) - w / 2, 0), width - w) & ~1
-        let y = min(max(Int((Double(height) * centerY).rounded()) - h / 2, 0), height - h) & ~1
+        // Centres are clamped before the Int conversion, which traps on the huge values a malformed request can carry.
+        let x = min(max(Int((Double(width) * centerX.clamped(to: 0...1)).rounded()) - w / 2, 0), width - w) & ~1
+        let y = min(max(Int((Double(height) * centerY.clamped(to: 0...1)).rounded()) - h / 2, 0), height - h) & ~1
         return (x, y, w, h)
     }
 }
@@ -67,8 +68,10 @@ public struct PatternSpec: Hashable, Codable, Sendable {
     }
 
     /// Convenience: a window patch in the given format.
-    public static func patch(_ color: SignalRGB, window: WindowSpec = .tenPercent, background: SignalRGB = .black,
-                             format: SignalFormat, hdr10Metadata: HDR10StaticMetadata? = nil) -> PatternSpec {
+    public static func patch(
+        _ color: SignalRGB, window: WindowSpec = .tenPercent, background: SignalRGB = .black,
+        format: SignalFormat, hdr10Metadata: HDR10StaticMetadata? = nil
+    ) -> PatternSpec {
         PatternSpec(content: .window(patch: color, window: window, background: background), format: format, hdr10Metadata: hdr10Metadata)
     }
 
