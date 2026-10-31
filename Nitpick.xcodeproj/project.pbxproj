@@ -57,6 +57,7 @@
 		E01EBF10555AF766CA0DE37C /* ResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F601CC2282BA98897D1BB1B0 /* ResultsView.swift */; };
 		E5610B6EF18954CD89C4CCF2 /* InspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E928056B3604E8C0E506CA57 /* InspectorView.swift */; };
 		F11CC0CCA36F3E18B35D6066 /* NitpickTVApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 186FA284325AA9EDBB2328ED /* NitpickTVApp.swift */; };
+		F43CDA3BCA82A307C0BEAA44 /* LinkTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D53359798DE4BEF78FB2D1 /* LinkTest.swift */; };
 		F8ECF1116AFEA4FEE5214816 /* Export.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437D9DCA87A033C61D20E00 /* Export.swift */; };
 /* End PBXBuildFile section */
 
@@ -70,6 +71,7 @@
 		14BD36ECF0AFCA82F18DCAB8 /* Nitpick.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Nitpick.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		158267BFA9E37441A31215FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		15B4971338AC033474C20B2D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		15D53359798DE4BEF78FB2D1 /* LinkTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkTest.swift; sourceTree = "<group>"; };
 		184F8987E39868FE2B3C4983 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		186FA284325AA9EDBB2328ED /* NitpickTVApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NitpickTVApp.swift; sourceTree = "<group>"; };
 		1A98D19EA9E25AC6C97237A8 /* HelpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpView.swift; sourceTree = "<group>"; };
@@ -175,6 +177,7 @@
 				F26857B6846670192F3D3162 /* ErrorText.swift */,
 				547550D3F088107CE8BCDCC0 /* Formatters.swift */,
 				D8F018FADD77B83F62177E8A /* Headless.swift */,
+				15D53359798DE4BEF78FB2D1 /* LinkTest.swift */,
 				4147C40D26B87668493DF1E4 /* LocalNetworkMonitor.swift */,
 				89F65E4F4CCA38BA6C103D29 /* Screenshots.swift */,
 			);
@@ -429,6 +432,7 @@
 				968D89BEDBA798C56190FB0E /* Headless.swift in Sources */,
 				BFCCAB1A3D895C6496CFC466 /* HelpView.swift in Sources */,
 				E5610B6EF18954CD89C4CCF2 /* InspectorView.swift in Sources */,
+				F43CDA3BCA82A307C0BEAA44 /* LinkTest.swift in Sources */,
 				B32D1C5C89F8051C14A1FEB1 /* LocalNetworkMonitor.swift in Sources */,
 				6B84C32EF9C039DA640B1296 /* MeterCard.swift in Sources */,
 				A737CF9CEDFE39EB8F0AE760 /* MeterDevice.swift in Sources */,

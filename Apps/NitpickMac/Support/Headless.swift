@@ -4,7 +4,8 @@
     import ColorScience
     import Foundation
 
-    /// DEBUG launch arguments for verification without a screen: `-demoRun <preset>` and `-renderScreenshots <dir>`.
+    /// DEBUG launch arguments for verification without a screen: `-demoRun <preset>`, `-renderScreenshots <dir>` and
+    /// `-linkTest …` / `-linkTestToken …` (see `LinkTest`).
     enum Headless {
         /// Runs the requested job and exits the process; returns false when no job was requested.
         static func runIfRequested() -> Bool {
@@ -18,6 +19,10 @@
                 job = { await DemoRun.run(preset) }
             } else if let dir = value(after: "-renderScreenshots") {
                 job = { await Screenshots.render(to: URL(fileURLWithPath: dir)) }
+            } else if let i = args.firstIndex(of: "-linkTest"), i + 4 < args.count {
+                job = { await LinkTest.run(host: args[i + 1], port: args[i + 2], pin: args[i + 3], name: args[i + 4]) }
+            } else if let i = args.firstIndex(of: "-linkTestToken"), i + 2 < args.count {
+                job = { await LinkTest.run(host: args[i + 1], port: args[i + 2], pin: nil, name: nil) }
             } else {
                 return false
             }

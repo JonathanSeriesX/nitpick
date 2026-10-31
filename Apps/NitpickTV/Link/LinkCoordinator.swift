@@ -87,8 +87,14 @@ import os
             self.port = port
             address = Self.ipv4Address()
             status = "Listening"
+            #if DEBUG
+                print("NITPICK_LISTENING port=\(port) name=\(serviceName)")  // simulator link tests read this
+            #endif
         case .pinChanged(let pin):
             self.pin = pin
+            #if DEBUG
+                print("NITPICK_PIN=\(pin)")  // simulator link tests read the PIN from the console
+            #endif
         case .clientConnected(let id, let identity):
             let clientID = UUID(uuidString: String(identity.dropFirst(4)))
             let name = clientID.flatMap { Self.clientNames[$0.uuidString] } ?? "Mac"

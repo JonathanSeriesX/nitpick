@@ -40,7 +40,7 @@ final class PatternDevice {
 
     @ObservationIgnored private let panel: SimulatedPanel
     @ObservationIgnored private let defaults: UserDefaults
-    @ObservationIgnored private let credentials = KeychainCredentialStore()
+    @ObservationIgnored private let credentials: any ClientCredentialStore
     @ObservationIgnored private let client: PatternLinkClient
     @ObservationIgnored private var browser: PatternLinkBrowser?
     @ObservationIgnored private var tasks: [Task<Void, Never>] = []
@@ -48,9 +48,10 @@ final class PatternDevice {
     private(set) var source: (any PatternSource)?
     private(set) var simulated: SimulatedPatternSource?
 
-    init(panel: SimulatedPanel, defaults: UserDefaults) {
+    init(panel: SimulatedPanel, defaults: UserDefaults, credentials: any ClientCredentialStore = KeychainCredentialStore()) {
         self.panel = panel
         self.defaults = defaults
+        self.credentials = credentials
         kind = DeviceKind(rawValue: defaults.string(forKey: "pattern.kind") ?? "") ?? .real
         let clientID: UUID
         if let stored = defaults.string(forKey: "pattern.clientID").flatMap(UUID.init(uuidString:)) {
@@ -60,7 +61,7 @@ final class PatternDevice {
             defaults.set(clientID.uuidString, forKey: "pattern.clientID")
         }
         client = PatternLinkClient(
-            clientName: Host.current().localizedName ?? "Mac", clientID: clientID, credentialStore: KeychainCredentialStore())
+            clientName: Host.current().localizedName ?? "Mac", clientID: clientID, credentialStore: credentials)
         manualHost = defaults.string(forKey: "pattern.manualHost") ?? ""
         manualPort = defaults.string(forKey: "pattern.manualPort") ?? ""
         manualName = defaults.string(forKey: "pattern.serviceName") ?? ""
@@ -183,7 +184,8 @@ final class PatternDevice {
             reconnectAttempts = 0
             remember(target)
             startPolling()
-        } catch PatternLinkError.authenticationFailed {
+        } catch CalibrationError.refused {
+            // RemotePatternSource reports a rejected token as `.refused`.
             askPIN(target)
             error = ErrorText(
                 title: "Pair again", message: "\(target.name) no longer accepts the saved pairing.",
@@ -270,13 +272,17 @@ final class PatternDevice {
         do { capabilities?.displayMode = try await client.queryStatus() } catch { self.error = ErrorText(error) }
     }
 
-    func showTestPattern() async {
-        guard let source else { return }
+    @discardableResult
+    func showTestPattern() async -> ShowAck? {
+        guard let source else { return nil }
         let format: SignalFormat = testHDR ? .hdr10 : .sdr
         let pattern = PatternSpec.patch(
             .gray(testLevel / 100), window: WindowSpec(areaFraction: testWindow), format: format,
             hdr10Metadata: testHDR ? .p3D65_1000 : nil)
-        do { _ = try await source.show(pattern) } catch { self.error = ErrorText(error) }
+        do { return try await source.show(pattern) } catch {
+            self.error = ErrorText(error)
+            return nil
+        }
     }
 
     func blank() async {
