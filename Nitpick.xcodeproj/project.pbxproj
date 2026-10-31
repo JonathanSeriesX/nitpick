@@ -7,43 +7,111 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0E378ACE86573E8CD40BE51F /* DeviceHub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5156F06C92BC971F53E117F3 /* DeviceHub.swift */; };
+		1065F3AA49104DC6D60C9E5D /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E35ACCFDEA595BAAF6B607 /* RootView.swift */; };
 		18C26F7DBC0405390A3E66E4 /* LGControl in Frameworks */ = {isa = PBXBuildFile; productRef = FEC3F7594C38FFFFDC78C12A /* LGControl */; };
 		1B4CB4B9F37CC6D17AA72CE8 /* PatternLink in Frameworks */ = {isa = PBXBuildFile; productRef = CB85FE8E0656478A878A0AF4 /* PatternLink */; };
+		1EF5E52268E0685DC85E6056 /* NewSessionDraft.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07B3703CE5744DBD52AA1AF7 /* NewSessionDraft.swift */; };
+		21DADFF98EADDBD70B22FDB0 /* PatternCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D40DA81FF39DB56A0FA4BC5 /* PatternCard.swift */; };
+		2C791C61F41EC74E8A094B52 /* PinField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09DD7698FE3BD9A0C765D80C /* PinField.swift */; };
+		2D705181DB2A673F5B330A99 /* TVDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 114ED348314A42AE731735E9 /* TVDevice.swift */; };
+		45F94AA724EFAD87822CEF37 /* DeviceKinds.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CE82D75EA589C72D32025B /* DeviceKinds.swift */; };
 		46A21EF4170CDC9A0BB1D24E /* StandaloneMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78BFDD1757410156899A55D /* StandaloneMenu.swift */; };
+		4B91F848491D734C86BCFD83 /* NitpickApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9997034C9C20E4E5DCDB5806 /* NitpickApp.swift */; };
 		4D7A221607FE51CCD394AD5B /* Calibration in Frameworks */ = {isa = PBXBuildFile; productRef = 946590D83A205AA052BD7892 /* Calibration */; };
+		565DE5ED35F01445BA6EBEFD /* PreflightView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6533132B8CA9465F589D5817 /* PreflightView.swift */; };
+		5EF3CDEC0CDCFF6BCF7C6F1E /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0195681930F1912063C1BFDB /* AppModel.swift */; };
 		61E2FDBB6983420749CB331A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7E0FC8B82ED55B459D23CF09 /* Assets.xcassets */; };
-		6990FE84456148F7E8F565BB /* NitpickApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1A1BB5BEE6B29D20DDF548E /* NitpickApp.swift */; };
+		6881E111FA61A8C140409B55 /* Formatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 547550D3F088107CE8BCDCC0 /* Formatters.swift */; };
+		6B84C32EF9C039DA640B1296 /* MeterCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD4FF6BD22FBFEAF70ED0624 /* MeterCard.swift */; };
+		6F657BC5C607A44F3416EF48 /* AppCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C21737D3241259DE4DFBD77 /* AppCommands.swift */; };
 		75A323F9150A5B8E30120450 /* ConnectedOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FAEA2438EE249C819A62A7B /* ConnectedOverlay.swift */; };
+		7E55EC2C75C066A6F3085C50 /* SessionRun.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E6A0023AE478F563C9943B4 /* SessionRun.swift */; };
+		7E9413B9F836B72E01C3CAB1 /* RunProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7487DF135E6CBFBD46549F9C /* RunProgressView.swift */; };
+		8255A7D8D103B0C8D225D28C /* ErrorText.swift in Sources */ = {isa = PBXBuildFile; fileRef = F26857B6846670192F3D3162 /* ErrorText.swift */; };
 		8FBB373C50CA1D12FBE94E35 /* MeterKit in Frameworks */ = {isa = PBXBuildFile; productRef = D0E620260B2578A7BC3B73D9 /* MeterKit */; };
 		8FDDC7783DE0203901E0DA8E /* ColorScience in Frameworks */ = {isa = PBXBuildFile; productRef = 6AC7048799D7360FE026D7C2 /* ColorScience */; };
+		95FA6EA0360CC60438D9CECC /* ColorCharts.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1EBA59486D89476EF0D8E8A /* ColorCharts.swift */; };
+		968D89BEDBA798C56190FB0E /* Headless.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F018FADD77B83F62177E8A /* Headless.swift */; };
 		98BC242CA65FFD85C6592771 /* LinkCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4B48A2A3600765BC065962C /* LinkCoordinator.swift */; };
 		99959E6BE31E95B74FA57F00 /* PatternRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9813DED259AD29A3DFA2450C /* PatternRenderer.swift */; };
+		9A2BC822E7A7290E9A574C8A /* ChartData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E64BC7D645958A1B60CA368 /* ChartData.swift */; };
+		A167E0B7E283A312CBA4A65A /* PatternDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579A29468EFE89F0BD6061 /* PatternDevice.swift */; };
+		A4B0EB4C3843C7A931E08442 /* SessionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BC8D77698A8FF5242C416F4 /* SessionView.swift */; };
+		A737CF9CEDFE39EB8F0AE760 /* MeterDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C9EB96D83339B06FF3B8B70 /* MeterDevice.swift */; };
+		A914EB92D2505AA4DCBFBB2F /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB05D8D08F56FA0F9210E82E /* Components.swift */; };
+		B28FA1E0D9F40E89AFEEF99D /* ResultDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CACF8029BC8DB5D4BE73DAD /* ResultDetails.swift */; };
+		B32D1C5C89F8051C14A1FEB1 /* LocalNetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4147C40D26B87668493DF1E4 /* LocalNetworkMonitor.swift */; };
 		B676933B73418987FF1ED3A5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 15B4971338AC033474C20B2D /* Assets.xcassets */; };
 		BE145A5AC5FAC8DB75966507 /* PairingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5B85723C2C8A599753853F9 /* PairingScreen.swift */; };
+		BFCCAB1A3D895C6496CFC466 /* HelpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A98D19EA9E25AC6C97237A8 /* HelpView.swift */; };
 		C3B6D7FE52557500643BB7DF /* ColorScience in Frameworks */ = {isa = PBXBuildFile; productRef = 9B807589A370160D8109FA76 /* ColorScience */; };
+		C95BB238306EA117986D38CC /* SimulatedRig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CAA367552F661FEBBCF2223 /* SimulatedRig.swift */; };
 		CCD728C3D1EAEA1BC8C85800 /* PatternLink in Frameworks */ = {isa = PBXBuildFile; productRef = D6026F4BBC0E423E104F1C1C /* PatternLink */; };
+		CDD5DD97C53691C7470041F2 /* GrayscaleCharts.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE3D976E47E7AE4EEA3F78F8 /* GrayscaleCharts.swift */; };
+		D206EEEA0C6C5E1B3BDBA716 /* Screenshots.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89F65E4F4CCA38BA6C103D29 /* Screenshots.swift */; };
+		D8D26512CA224308929739A6 /* NewSessionSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D3EE360C8FFB23776E28FB7 /* NewSessionSheet.swift */; };
+		DC530B550D04B6163F67EBCC /* TVCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB01E782F72AD26983C1536B /* TVCard.swift */; };
+		DD910F19EEA83895CE8C7967 /* DevicesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93734D03A9F7D0C2404384AD /* DevicesView.swift */; };
 		DF0B0C403137EA3E432F623B /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C7244F150A7605C12F8594C /* RootView.swift */; };
+		E01EBF10555AF766CA0DE37C /* ResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F601CC2282BA98897D1BB1B0 /* ResultsView.swift */; };
+		E5610B6EF18954CD89C4CCF2 /* InspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E928056B3604E8C0E506CA57 /* InspectorView.swift */; };
 		F11CC0CCA36F3E18B35D6066 /* NitpickTVApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 186FA284325AA9EDBB2328ED /* NitpickTVApp.swift */; };
+		F8ECF1116AFEA4FEE5214816 /* Export.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437D9DCA87A033C61D20E00 /* Export.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0195681930F1912063C1BFDB /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		07B3703CE5744DBD52AA1AF7 /* NewSessionDraft.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewSessionDraft.swift; sourceTree = "<group>"; };
+		09DD7698FE3BD9A0C765D80C /* PinField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinField.swift; sourceTree = "<group>"; };
+		0D40DA81FF39DB56A0FA4BC5 /* PatternCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatternCard.swift; sourceTree = "<group>"; };
 		104FF25A2682E54AD11111F1 /* NitpickTV.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = NitpickTV.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		114ED348314A42AE731735E9 /* TVDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVDevice.swift; sourceTree = "<group>"; };
 		14BD36ECF0AFCA82F18DCAB8 /* Nitpick.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Nitpick.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		158267BFA9E37441A31215FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		15B4971338AC033474C20B2D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		184F8987E39868FE2B3C4983 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		186FA284325AA9EDBB2328ED /* NitpickTVApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NitpickTVApp.swift; sourceTree = "<group>"; };
+		1A98D19EA9E25AC6C97237A8 /* HelpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpView.swift; sourceTree = "<group>"; };
+		1CAA367552F661FEBBCF2223 /* SimulatedRig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimulatedRig.swift; sourceTree = "<group>"; };
+		1CACF8029BC8DB5D4BE73DAD /* ResultDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultDetails.swift; sourceTree = "<group>"; };
 		291E6C011C061A951B168EC9 /* NitpickTV.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NitpickTV.entitlements; sourceTree = "<group>"; };
+		4147C40D26B87668493DF1E4 /* LocalNetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalNetworkMonitor.swift; sourceTree = "<group>"; };
+		4C9EB96D83339B06FF3B8B70 /* MeterDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeterDevice.swift; sourceTree = "<group>"; };
+		5156F06C92BC971F53E117F3 /* DeviceHub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceHub.swift; sourceTree = "<group>"; };
+		547550D3F088107CE8BCDCC0 /* Formatters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Formatters.swift; sourceTree = "<group>"; };
 		5C7244F150A7605C12F8594C /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		5D3EE360C8FFB23776E28FB7 /* NewSessionSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewSessionSheet.swift; sourceTree = "<group>"; };
+		5E64BC7D645958A1B60CA368 /* ChartData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartData.swift; sourceTree = "<group>"; };
 		5FAEA2438EE249C819A62A7B /* ConnectedOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedOverlay.swift; sourceTree = "<group>"; };
+		6533132B8CA9465F589D5817 /* PreflightView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreflightView.swift; sourceTree = "<group>"; };
+		7487DF135E6CBFBD46549F9C /* RunProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunProgressView.swift; sourceTree = "<group>"; };
+		7BC8D77698A8FF5242C416F4 /* SessionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionView.swift; sourceTree = "<group>"; };
+		7C21737D3241259DE4DFBD77 /* AppCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCommands.swift; sourceTree = "<group>"; };
 		7E0FC8B82ED55B459D23CF09 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		7E6A0023AE478F563C9943B4 /* SessionRun.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionRun.swift; sourceTree = "<group>"; };
+		89F65E4F4CCA38BA6C103D29 /* Screenshots.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Screenshots.swift; sourceTree = "<group>"; };
+		93734D03A9F7D0C2404384AD /* DevicesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicesView.swift; sourceTree = "<group>"; };
 		9813DED259AD29A3DFA2450C /* PatternRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatternRenderer.swift; sourceTree = "<group>"; };
+		9997034C9C20E4E5DCDB5806 /* NitpickApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NitpickApp.swift; sourceTree = "<group>"; };
 		A5B85723C2C8A599753853F9 /* PairingScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairingScreen.swift; sourceTree = "<group>"; };
 		A78BFDD1757410156899A55D /* StandaloneMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandaloneMenu.swift; sourceTree = "<group>"; };
+		AE3D976E47E7AE4EEA3F78F8 /* GrayscaleCharts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrayscaleCharts.swift; sourceTree = "<group>"; };
+		B3579A29468EFE89F0BD6061 /* PatternDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatternDevice.swift; sourceTree = "<group>"; };
+		B437D9DCA87A033C61D20E00 /* Export.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Export.swift; sourceTree = "<group>"; };
 		B60730F1CD267AFC2B644C5B /* NitpickKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = NitpickKit; path = Packages/NitpickKit; sourceTree = SOURCE_ROOT; };
 		B7FE7E0B4180968F13307CC9 /* Nitpick.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Nitpick.entitlements; sourceTree = "<group>"; };
-		C1A1BB5BEE6B29D20DDF548E /* NitpickApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NitpickApp.swift; sourceTree = "<group>"; };
+		C9E35ACCFDEA595BAAF6B607 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		D8F018FADD77B83F62177E8A /* Headless.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Headless.swift; sourceTree = "<group>"; };
+		DB01E782F72AD26983C1536B /* TVCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVCard.swift; sourceTree = "<group>"; };
+		DD4FF6BD22FBFEAF70ED0624 /* MeterCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeterCard.swift; sourceTree = "<group>"; };
+		E1EBA59486D89476EF0D8E8A /* ColorCharts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorCharts.swift; sourceTree = "<group>"; };
 		E4B48A2A3600765BC065962C /* LinkCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkCoordinator.swift; sourceTree = "<group>"; };
+		E928056B3604E8C0E506CA57 /* InspectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectorView.swift; sourceTree = "<group>"; };
+		EB05D8D08F56FA0F9210E82E /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
+		F26857B6846670192F3D3162 /* ErrorText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorText.swift; sourceTree = "<group>"; };
+		F601CC2282BA98897D1BB1B0 /* ResultsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultsView.swift; sourceTree = "<group>"; };
+		F7CE82D75EA589C72D32025B /* DeviceKinds.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceKinds.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,12 +168,38 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		4A485EE618D4C59B36D85525 /* Support */ = {
+			isa = PBXGroup;
+			children = (
+				EB05D8D08F56FA0F9210E82E /* Components.swift */,
+				F26857B6846670192F3D3162 /* ErrorText.swift */,
+				547550D3F088107CE8BCDCC0 /* Formatters.swift */,
+				D8F018FADD77B83F62177E8A /* Headless.swift */,
+				4147C40D26B87668493DF1E4 /* LocalNetworkMonitor.swift */,
+				89F65E4F4CCA38BA6C103D29 /* Screenshots.swift */,
+			);
+			path = Support;
+			sourceTree = "<group>";
+		};
 		586B4BB2F4F53068A1367628 /* Rendering */ = {
 			isa = PBXGroup;
 			children = (
 				9813DED259AD29A3DFA2450C /* PatternRenderer.swift */,
 			);
 			path = Rendering;
+			sourceTree = "<group>";
+		};
+		74F447F2638E6B116E707361 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				7C21737D3241259DE4DFBD77 /* AppCommands.swift */,
+				0195681930F1912063C1BFDB /* AppModel.swift */,
+				1A98D19EA9E25AC6C97237A8 /* HelpView.swift */,
+				E928056B3604E8C0E506CA57 /* InspectorView.swift */,
+				9997034C9C20E4E5DCDB5806 /* NitpickApp.swift */,
+				C9E35ACCFDEA595BAAF6B607 /* RootView.swift */,
+			);
+			path = App;
 			sourceTree = "<group>";
 		};
 		7A898B9DB461789C460F6FF5 /* NitpickTV */ = {
@@ -130,13 +224,45 @@
 			path = Link;
 			sourceTree = "<group>";
 		};
+		AB672E2D110318B87F8315CB /* Charts */ = {
+			isa = PBXGroup;
+			children = (
+				5E64BC7D645958A1B60CA368 /* ChartData.swift */,
+				E1EBA59486D89476EF0D8E8A /* ColorCharts.swift */,
+				AE3D976E47E7AE4EEA3F78F8 /* GrayscaleCharts.swift */,
+			);
+			path = Charts;
+			sourceTree = "<group>";
+		};
+		DB21E49DFE8E4B1336964885 /* Devices */ = {
+			isa = PBXGroup;
+			children = (
+				5156F06C92BC971F53E117F3 /* DeviceHub.swift */,
+				F7CE82D75EA589C72D32025B /* DeviceKinds.swift */,
+				93734D03A9F7D0C2404384AD /* DevicesView.swift */,
+				DD4FF6BD22FBFEAF70ED0624 /* MeterCard.swift */,
+				4C9EB96D83339B06FF3B8B70 /* MeterDevice.swift */,
+				0D40DA81FF39DB56A0FA4BC5 /* PatternCard.swift */,
+				B3579A29468EFE89F0BD6061 /* PatternDevice.swift */,
+				09DD7698FE3BD9A0C765D80C /* PinField.swift */,
+				1CAA367552F661FEBBCF2223 /* SimulatedRig.swift */,
+				DB01E782F72AD26983C1536B /* TVCard.swift */,
+				114ED348314A42AE731735E9 /* TVDevice.swift */,
+			);
+			path = Devices;
+			sourceTree = "<group>";
+		};
 		E79ACDECA6BB77E88E4F9A99 /* NitpickMac */ = {
 			isa = PBXGroup;
 			children = (
+				74F447F2638E6B116E707361 /* App */,
+				AB672E2D110318B87F8315CB /* Charts */,
+				DB21E49DFE8E4B1336964885 /* Devices */,
+				F1EEF399201BE33C9CAEE352 /* Sessions */,
+				4A485EE618D4C59B36D85525 /* Support */,
 				15B4971338AC033474C20B2D /* Assets.xcassets */,
 				184F8987E39868FE2B3C4983 /* Info.plist */,
 				B7FE7E0B4180968F13307CC9 /* Nitpick.entitlements */,
-				C1A1BB5BEE6B29D20DDF548E /* NitpickApp.swift */,
 			);
 			path = NitpickMac;
 			sourceTree = "<group>";
@@ -148,6 +274,22 @@
 				F9E4C4E8A034367C708ED62B /* Packages */,
 				3DB7DF4EBDB283CB08FC0FCE /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		F1EEF399201BE33C9CAEE352 /* Sessions */ = {
+			isa = PBXGroup;
+			children = (
+				B437D9DCA87A033C61D20E00 /* Export.swift */,
+				07B3703CE5744DBD52AA1AF7 /* NewSessionDraft.swift */,
+				5D3EE360C8FFB23776E28FB7 /* NewSessionSheet.swift */,
+				6533132B8CA9465F589D5817 /* PreflightView.swift */,
+				1CACF8029BC8DB5D4BE73DAD /* ResultDetails.swift */,
+				F601CC2282BA98897D1BB1B0 /* ResultsView.swift */,
+				7487DF135E6CBFBD46549F9C /* RunProgressView.swift */,
+				7E6A0023AE478F563C9943B4 /* SessionRun.swift */,
+				7BC8D77698A8FF5242C416F4 /* SessionView.swift */,
+			);
+			path = Sessions;
 			sourceTree = "<group>";
 		};
 		F9E4C4E8A034367C708ED62B /* Packages */ = {
@@ -272,7 +414,41 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6990FE84456148F7E8F565BB /* NitpickApp.swift in Sources */,
+				6F657BC5C607A44F3416EF48 /* AppCommands.swift in Sources */,
+				5EF3CDEC0CDCFF6BCF7C6F1E /* AppModel.swift in Sources */,
+				9A2BC822E7A7290E9A574C8A /* ChartData.swift in Sources */,
+				95FA6EA0360CC60438D9CECC /* ColorCharts.swift in Sources */,
+				A914EB92D2505AA4DCBFBB2F /* Components.swift in Sources */,
+				0E378ACE86573E8CD40BE51F /* DeviceHub.swift in Sources */,
+				45F94AA724EFAD87822CEF37 /* DeviceKinds.swift in Sources */,
+				DD910F19EEA83895CE8C7967 /* DevicesView.swift in Sources */,
+				8255A7D8D103B0C8D225D28C /* ErrorText.swift in Sources */,
+				F8ECF1116AFEA4FEE5214816 /* Export.swift in Sources */,
+				6881E111FA61A8C140409B55 /* Formatters.swift in Sources */,
+				CDD5DD97C53691C7470041F2 /* GrayscaleCharts.swift in Sources */,
+				968D89BEDBA798C56190FB0E /* Headless.swift in Sources */,
+				BFCCAB1A3D895C6496CFC466 /* HelpView.swift in Sources */,
+				E5610B6EF18954CD89C4CCF2 /* InspectorView.swift in Sources */,
+				B32D1C5C89F8051C14A1FEB1 /* LocalNetworkMonitor.swift in Sources */,
+				6B84C32EF9C039DA640B1296 /* MeterCard.swift in Sources */,
+				A737CF9CEDFE39EB8F0AE760 /* MeterDevice.swift in Sources */,
+				1EF5E52268E0685DC85E6056 /* NewSessionDraft.swift in Sources */,
+				D8D26512CA224308929739A6 /* NewSessionSheet.swift in Sources */,
+				4B91F848491D734C86BCFD83 /* NitpickApp.swift in Sources */,
+				21DADFF98EADDBD70B22FDB0 /* PatternCard.swift in Sources */,
+				A167E0B7E283A312CBA4A65A /* PatternDevice.swift in Sources */,
+				2C791C61F41EC74E8A094B52 /* PinField.swift in Sources */,
+				565DE5ED35F01445BA6EBEFD /* PreflightView.swift in Sources */,
+				B28FA1E0D9F40E89AFEEF99D /* ResultDetails.swift in Sources */,
+				E01EBF10555AF766CA0DE37C /* ResultsView.swift in Sources */,
+				1065F3AA49104DC6D60C9E5D /* RootView.swift in Sources */,
+				7E9413B9F836B72E01C3CAB1 /* RunProgressView.swift in Sources */,
+				D206EEEA0C6C5E1B3BDBA716 /* Screenshots.swift in Sources */,
+				7E55EC2C75C066A6F3085C50 /* SessionRun.swift in Sources */,
+				A4B0EB4C3843C7A931E08442 /* SessionView.swift in Sources */,
+				C95BB238306EA117986D38CC /* SimulatedRig.swift in Sources */,
+				DC530B550D04B6163F67EBCC /* TVCard.swift in Sources */,
+				2D705181DB2A673F5B330A99 /* TVDevice.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

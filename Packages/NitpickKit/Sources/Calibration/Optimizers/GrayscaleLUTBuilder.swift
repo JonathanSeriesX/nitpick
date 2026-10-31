@@ -1,5 +1,5 @@
-import Foundation
 import ColorScience
+import Foundation
 
 /// What a LUT builder predicts about its result.
 public struct LUTReport: Codable, Hashable, Sendable {
@@ -29,21 +29,28 @@ public struct GrayscaleLUTBuilder: Sendable {
     /// - Parameters:
     ///   - grayscale: averaged grey readings (stimulus 0…1, absolute XYZ); must include 0 and 1 and ≥ 21 points.
     ///   - primaries: 100 % red, green and blue readings.
-    public func build(grayscale: [(stimulus: Double, xyz: XYZ)], primaries: (red: XYZ, green: XYZ, blue: XYZ),
-                      target: CalibrationTarget) throws -> (LUT1D, LUTReport) {
+    public func build(
+        grayscale: [(stimulus: Double, xyz: XYZ)], primaries: (red: XYZ, green: XYZ, blue: XYZ),
+        target: CalibrationTarget
+    ) throws -> (LUT1D, LUTReport) {
         let gray = grayscale.sorted { $0.stimulus < $1.stimulus }
         guard gray.count >= 21, gray.first?.stimulus == 0, gray.last?.stimulus == 1 else {
             throw CalibrationError.precondition("The 1D LUT needs a grayscale of at least 21 points from 0 to 100 %")
         }
         let black = gray[0].xyz
-        let r = primaries.red - black, g = primaries.green - black, b = primaries.blue - black
+        let r = primaries.red - black
+        let g = primaries.green - black
+        let b = primaries.blue - black
         guard let inverse = Matrix3(rows: (r.X, g.X, b.X), (r.Y, g.Y, b.Y), (r.Z, g.Z, b.Z)).inverse else {
             throw CalibrationError.precondition("The measured primaries are degenerate")
         }
         let amounts = gray.map { p in inverse * RGB(r: p.xyz.X - black.X, g: p.xyz.Y - black.Y, b: p.xyz.Z - black.Z) }
         let curves = (0..<3).map { c -> MonotoneCubic in
             var running = 0.0
-            let ys = amounts.map { a -> Double in running = max(running, pow(max(a[c], 0), 1 / 2.2)); return running }
+            let ys = amounts.map { a -> Double in
+                running = max(running, pow(max(a[c], 0), 1 / 2.2))
+                return running
+            }
             return MonotoneCubic(x: gray.map(\.stimulus), y: ys)
         }
         func needed(_ v: Double) -> RGB {
@@ -57,9 +64,17 @@ public struct GrayscaleLUTBuilder: Sendable {
             let need = needed(v)
             for c in 0..<3 {
                 let y = pow(max(need[c], 0), 1 / 2.2)
-                if y >= curves[c](1) { tables[c][j] = 1; if j > 0 { clipped.append(v) }; continue }
-                var lo = 0.0, hi = 1.0
-                for _ in 0..<40 { let mid = (lo + hi) / 2; if curves[c](mid) < y { lo = mid } else { hi = mid } }
+                if y >= curves[c](1) {
+                    tables[c][j] = 1
+                    if j > 0 { clipped.append(v) }
+                    continue
+                }
+                var lo = 0.0
+                var hi = 1.0
+                for _ in 0..<40 {
+                    let mid = (lo + hi) / 2
+                    if curves[c](mid) < y { lo = mid } else { hi = mid }
+                }
                 tables[c][j] = hi
             }
         }
@@ -80,8 +95,12 @@ public struct GrayscaleLUTBuilder: Sendable {
             let predicted = black + ColorSpaceMatrix.columns(r, g, b, model)
             worst = max(worst, Metrics.deltaE(predicted, target.reference(.gray(p.stimulus)), target: target))
         }
-        return (lut, LUTReport(pointsUsed: gray.count, maxPredictedError: worst,
-                               clippedRange: clipped.isEmpty ? nil : clipped.min()!...clipped.max()!, clippedNodes: 0, warnings: warnings))
+        return (
+            lut,
+            LUTReport(
+                pointsUsed: gray.count, maxPredictedError: worst,
+                clippedRange: clipped.isEmpty ? nil : clipped.min()!...clipped.max()!, clippedNodes: 0, warnings: warnings)
+        )
     }
 }
 
@@ -96,14 +115,18 @@ struct MonotoneCubic: Sendable {
     let x: [Double], y: [Double], slopes: [Double]
 
     init(x: [Double], y: [Double]) {
-        self.x = x; self.y = y
+        self.x = x
+        self.y = y
         let n = x.count
         let d = (0..<(n - 1)).map { (y[$0 + 1] - y[$0]) / (x[$0 + 1] - x[$0]) }
         var m = [Double](repeating: 0, count: n)
-        m[0] = d[0]; m[n - 1] = d[n - 2]
+        m[0] = d[0]
+        m[n - 1] = d[n - 2]
         for k in 1..<(n - 1) where d[k - 1] * d[k] > 0 {
-            let h0 = x[k] - x[k - 1], h1 = x[k + 1] - x[k]
-            let w1 = 2 * h1 + h0, w2 = h1 + 2 * h0
+            let h0 = x[k] - x[k - 1]
+            let h1 = x[k + 1] - x[k]
+            let w1 = 2 * h1 + h0
+            let w2 = h1 + 2 * h0
             m[k] = (w1 + w2) / (w1 / d[k - 1] + w2 / d[k])
         }
         slopes = m
@@ -112,10 +135,18 @@ struct MonotoneCubic: Sendable {
     func callAsFunction(_ t: Double) -> Double {
         if t <= x[0] { return y[0] }
         if t >= x[x.count - 1] { return y[y.count - 1] }
-        var lo = 0, hi = x.count - 1
-        while hi - lo > 1 { let mid = (lo + hi) / 2; if x[mid] <= t { lo = mid } else { hi = mid } }
-        let h = x[hi] - x[lo], s = (t - x[lo]) / h
-        let h00 = (1 + 2 * s) * (1 - s) * (1 - s), h10 = s * (1 - s) * (1 - s), h01 = s * s * (3 - 2 * s), h11 = s * s * (s - 1)
+        var lo = 0
+        var hi = x.count - 1
+        while hi - lo > 1 {
+            let mid = (lo + hi) / 2
+            if x[mid] <= t { lo = mid } else { hi = mid }
+        }
+        let h = x[hi] - x[lo]
+        let s = (t - x[lo]) / h
+        let h00 = (1 + 2 * s) * (1 - s) * (1 - s)
+        let h10 = s * (1 - s) * (1 - s)
+        let h01 = s * s * (3 - 2 * s)
+        let h11 = s * s * (s - 1)
         return h00 * y[lo] + h10 * h * slopes[lo] + h01 * y[hi] + h11 * h * slopes[hi]
     }
 }

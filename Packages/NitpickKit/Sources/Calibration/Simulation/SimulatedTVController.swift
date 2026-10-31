@@ -1,6 +1,6 @@
+import ColorScience
 import Foundation
 import Synchronization
-import ColorScience
 
 /// A `TVController` for `SimulatedPanel`, mirroring the webOS picture-settings and externalpq calibration API.
 ///
@@ -53,14 +53,19 @@ public final class SimulatedTVController: TVController {
             guard state.withLock({ $0.connected }) else { return nil }
             return TVCapabilities(
                 modelName: "OLED55B4 (simulated)", firmwareVersion: "sim-1.0", webOSVersion: "webOS 24 (simulated)",
-                inputs: (1...4).map { TVInput(id: "HDMI_\($0)", label: "HDMI \($0)", isConnected: "HDMI_\($0)" == SimulatedPanel.sourceInput) },
+                inputs: (1...4).map {
+                    TVInput(id: "HDMI_\($0)", label: "HDMI \($0)", isConnected: "HDMI_\($0)" == SimulatedPanel.sourceInput)
+                },
                 supportsCalibrationAPI: true, lut3DSize: 33, supportsGamutMatrix: true, isSimulated: true)
         }
     }
 
     public func connect() async throws {
         try await delay()
-        state.withLock { $0.connected = true; $0.commandLog.append("connect") }
+        state.withLock {
+            $0.connected = true
+            $0.commandLog.append("connect")
+        }
     }
 
     public func disconnect() async { state.withLock { $0.connected = false } }
@@ -108,7 +113,10 @@ public final class SimulatedTVController: TVController {
         try await delay()
         try state.withLock { s throws(any Error) in
             guard s.connected else { throw CalibrationError.notConnected("TV") }
-            if let error = s.nextError { s.nextError = nil; throw error }
+            if let error = s.nextError {
+                s.nextError = nil
+                throw error
+            }
             if let n = s.callsUntilDisconnect {
                 s.callsUntilDisconnect = n - 1
                 if n <= 1 {
@@ -122,8 +130,10 @@ public final class SimulatedTVController: TVController {
     }
 
     static let intRanges: [String: ClosedRange<Int>] = {
-        var r: [String: ClosedRange<Int>] = [PictureKey.backlight: 0...100, PictureKey.contrast: 0...100,
-                                             PictureKey.brightness: 0...100, PictureKey.color: 0...100]
+        var r: [String: ClosedRange<Int>] = [
+            PictureKey.backlight: 0...100, PictureKey.contrast: 0...100,
+            PictureKey.brightness: 0...100, PictureKey.color: 0...100,
+        ]
         for key in PictureKey.gains + PictureKey.offsets { r[key] = -50...50 }
         return r
     }()
@@ -144,7 +154,9 @@ public final class SimulatedTVController: TVController {
         } else if key == PictureKey.colorTemperature {
             guard value.stringValue.flatMap(ModeControls.warmth) != nil else { throw bad }
         } else if key == PictureKey.twentyPoint {
-            guard let points = PictureKey.decodeTwentyPoint(value), points.joined().allSatisfy({ (-50...50).contains($0) }) else { throw bad }
+            guard let points = PictureKey.decodeTwentyPoint(value), points.joined().allSatisfy({ (-50...50).contains($0) }) else {
+                throw bad
+            }
         } else {
             throw CalibrationError.unsupportedSetting(key)
         }

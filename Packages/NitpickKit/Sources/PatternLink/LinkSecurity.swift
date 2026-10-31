@@ -18,74 +18,74 @@ import Security
 ///   its listener when they change (live connections survive that).
 /// - Wrong key: the client sees `NWError.tls(-9820)` ("bad MAC"); unknown identity: `NWError.tls(-9864)`.
 public enum LinkSecurity {
-  /// Server-side identity that every `pin:<clientUUID>` client identity maps to.
-  static let pinKeyIdentity = "pin"
+    /// Server-side identity that every `pin:<clientUUID>` client identity maps to.
+    static let pinKeyIdentity = "pin"
 
-  /// PSK identity for a first-contact session authenticated with the TV's on-screen PIN.
-  public static func pinIdentity(_ clientID: UUID) -> String { "pin:\(clientID.uuidString)" }
-  /// PSK identity for a reconnect authenticated with the token issued at pairing.
-  public static func tokenIdentity(_ clientID: UUID) -> String { "tok:\(clientID.uuidString)" }
+    /// PSK identity for a first-contact session authenticated with the TV's on-screen PIN.
+    public static func pinIdentity(_ clientID: UUID) -> String { "pin:\(clientID.uuidString)" }
+    /// PSK identity for a reconnect authenticated with the token issued at pairing.
+    public static func tokenIdentity(_ clientID: UUID) -> String { "tok:\(clientID.uuidString)" }
 
-  /// The PIN-session key: HKDF-SHA256 of the PIN, salted with the Bonjour service name, info `nitpick-pin`.
-  public static func pinKey(pin: String, serviceName: String) -> SymmetricKey {
-    HKDF<SHA256>.deriveKey(
-      inputKeyMaterial: SymmetricKey(data: Data(pin.utf8)), salt: Data(serviceName.utf8),
-      info: Data("nitpick-pin".utf8), outputByteCount: 32)
-  }
-
-  /// Client parameters: TLS 1.2 PSK with `identity`, peer-to-peer allowed, link framer on top.
-  public static func parameters(psk: Data, identity: String) -> NWParameters {
-    tlsParameters {
-      sec_protocol_options_add_pre_shared_key(
-        $0, dispatchData(psk), dispatchData(Data(identity.utf8)))
+    /// The PIN-session key: HKDF-SHA256 of the PIN, salted with the Bonjour service name, info `nitpick-pin`.
+    public static func pinKey(pin: String, serviceName: String) -> SymmetricKey {
+        HKDF<SHA256>.deriveKey(
+            inputKeyMaterial: SymmetricKey(data: Data(pin.utf8)), salt: Data(serviceName.utf8),
+            info: Data("nitpick-pin".utf8), outputByteCount: 32)
     }
-  }
 
-  /// Server parameters.
-  /// - Parameters:
-  ///   - keys: PSK identity → key. Use `"pin"` for the current PIN key; any client identity `pin:<x>` maps to it.
-  ///   - queue: queue the identity callback runs on.
-  ///   - onClientIdentity: receives each handshake's client identity and its TLS metadata object, which is the same
-  ///     object the accepted connection later reports, so the caller can tie the identity to the connection.
-  public static func serverParameters(
-    keys: [String: Data], queue: DispatchQueue,
-    onClientIdentity: @escaping @Sendable (String, sec_protocol_metadata_t) -> Void
-  ) -> NWParameters {
-    let parameters = tlsParameters { options in
-      for (identity, key) in keys {
-        sec_protocol_options_add_pre_shared_key(
-          options, dispatchData(key), dispatchData(Data(identity.utf8)))
-      }
-      sec_protocol_options_set_pre_shared_key_selection_block(
-        options,
-        { metadata, hint, complete in
-          guard let hint else { return complete(nil) }
-          let identity = String(decoding: Data(hint as DispatchData), as: UTF8.self)
-          onClientIdentity(identity, metadata)
-          complete(identity.hasPrefix("pin:") ? dispatchData(Data(pinKeyIdentity.utf8)) : hint)
-        }, queue)
+    /// Client parameters: TLS 1.2 PSK with `identity`, peer-to-peer allowed, link framer on top.
+    public static func parameters(psk: Data, identity: String) -> NWParameters {
+        tlsParameters {
+            sec_protocol_options_add_pre_shared_key(
+                $0, dispatchData(psk), dispatchData(Data(identity.utf8)))
+        }
     }
-    parameters.allowLocalEndpointReuse = true
-    return parameters
-  }
 
-  private static func tlsParameters(_ configure: (sec_protocol_options_t) -> Void) -> NWParameters {
-    let tls = NWProtocolTLS.Options()
-    let options = tls.securityProtocolOptions
-    configure(options)
-    for suite in [
-      UInt16(TLS_ECDHE_PSK_WITH_CHACHA20_POLY1305_SHA256), UInt16(TLS_PSK_WITH_AES_128_GCM_SHA256),
-    ] {
-      sec_protocol_options_append_tls_ciphersuite(options, tls_ciphersuite_t(rawValue: suite)!)
+    /// Server parameters.
+    /// - Parameters:
+    ///   - keys: PSK identity → key. Use `"pin"` for the current PIN key; any client identity `pin:<x>` maps to it.
+    ///   - queue: queue the identity callback runs on.
+    ///   - onClientIdentity: receives each handshake's client identity and its TLS metadata object, which is the same
+    ///     object the accepted connection later reports, so the caller can tie the identity to the connection.
+    public static func serverParameters(
+        keys: [String: Data], queue: DispatchQueue,
+        onClientIdentity: @escaping @Sendable (String, sec_protocol_metadata_t) -> Void
+    ) -> NWParameters {
+        let parameters = tlsParameters { options in
+            for (identity, key) in keys {
+                sec_protocol_options_add_pre_shared_key(
+                    options, dispatchData(key), dispatchData(Data(identity.utf8)))
+            }
+            sec_protocol_options_set_pre_shared_key_selection_block(
+                options,
+                { metadata, hint, complete in
+                    guard let hint else { return complete(nil) }
+                    let identity = String(decoding: Data(hint as DispatchData), as: UTF8.self)
+                    onClientIdentity(identity, metadata)
+                    complete(identity.hasPrefix("pin:") ? dispatchData(Data(pinKeyIdentity.utf8)) : hint)
+                }, queue)
+        }
+        parameters.allowLocalEndpointReuse = true
+        return parameters
     }
-    sec_protocol_options_set_min_tls_protocol_version(options, .TLSv12)
-    sec_protocol_options_set_max_tls_protocol_version(options, .TLSv12)
-    let parameters = NWParameters(tls: tls)
-    parameters.includePeerToPeer = true
-    return parameters.addingLinkFramer()
-  }
 
-  private static func dispatchData(_ data: Data) -> __DispatchData {
-    data.withUnsafeBytes { DispatchData(bytes: $0) } as __DispatchData
-  }
+    private static func tlsParameters(_ configure: (sec_protocol_options_t) -> Void) -> NWParameters {
+        let tls = NWProtocolTLS.Options()
+        let options = tls.securityProtocolOptions
+        configure(options)
+        for suite in [
+            UInt16(TLS_ECDHE_PSK_WITH_CHACHA20_POLY1305_SHA256), UInt16(TLS_PSK_WITH_AES_128_GCM_SHA256),
+        ] {
+            sec_protocol_options_append_tls_ciphersuite(options, tls_ciphersuite_t(rawValue: suite)!)
+        }
+        sec_protocol_options_set_min_tls_protocol_version(options, .TLSv12)
+        sec_protocol_options_set_max_tls_protocol_version(options, .TLSv12)
+        let parameters = NWParameters(tls: tls)
+        parameters.includePeerToPeer = true
+        return parameters.addingLinkFramer()
+    }
+
+    private static func dispatchData(_ data: Data) -> __DispatchData {
+        data.withUnsafeBytes { DispatchData(bytes: $0) } as __DispatchData
+    }
 }

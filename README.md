@@ -32,6 +32,15 @@ xcodebuild -project Nitpick.xcodeproj -scheme Nitpick -destination 'platform=mac
 xcodebuild -project Nitpick.xcodeproj -scheme NitpickTV -destination 'platform=tvOS Simulator,name=Apple TV 4K (3rd generation)' build
 ```
 
+### Headless checks (Debug builds)
+
+```bash
+Nitpick.app/Contents/MacOS/Nitpick -demoRun movieSDR     # gameSDR | movieHDR10 | gameHDR10 | dolbyVision; exit 0 on pass
+```
+
+`-renderScreenshots <dir>` renders the main screens with demo data to PNG files; the tvOS app accepts
+`-debugScreen menu` (or a pattern name) to open a screen directly in the simulator.
+
 ## Layout
 
 - `Apps/NitpickMac` – macOS app (SwiftUI, Swift Charts, `@Observable`).

@@ -1,5 +1,5 @@
-import Foundation
 import ColorScience
+import Foundation
 
 /// A settings snapshot, LUT state not readable: the picture settings of the calibrated mode as read before any
 /// change. LUT/3D LUT/tonemap/DV data cannot be read back from the TV, so this is never a factory backup.
@@ -9,7 +9,10 @@ public struct RestorePoint: Codable, Hashable, Sendable {
     public var inputID: String
     public var settings: PictureSettings
 
-    public init(inputID: String, settings: PictureSettings) { self.inputID = inputID; self.settings = settings }
+    public init(inputID: String, settings: PictureSettings) {
+        self.inputID = inputID
+        self.settings = settings
+    }
 }
 
 public struct SessionResult: Codable, Sendable {
@@ -48,8 +51,12 @@ public struct CalibrationSession: Codable, Identifiable, Sendable {
     public var notes: String
 
     public init(id: UUID = UUID(), profile: SessionProfile, createdAt: Date = Date(), notes: String = "") {
-        self.id = id; self.createdAt = createdAt; updatedAt = createdAt; self.profile = profile
-        status = .draft; self.notes = notes
+        self.id = id
+        self.createdAt = createdAt
+        updatedAt = createdAt
+        self.profile = profile
+        status = .draft
+        self.notes = notes
     }
 }
 

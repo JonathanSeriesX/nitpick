@@ -8,7 +8,9 @@ public struct LUT1D: Hashable, Codable, Sendable {
 
     public init(red: [Double], green: [Double], blue: [Double]) {
         precondition(red.count == green.count && green.count == blue.count && red.count >= 2)
-        self.red = red; self.green = green; self.blue = blue
+        self.red = red
+        self.green = green
+        self.blue = blue
     }
 
     public var size: Int { red.count }
@@ -58,9 +60,13 @@ public struct LUT3D: Hashable, Codable, Sendable {
         var nodes: [RGB] = []
         nodes.reserveCapacity(size * size * size)
         let d = Double(size - 1)
-        for r in 0..<size { for g in 0..<size { for b in 0..<size {
-            nodes.append(RGB(r: Double(r) / d, g: Double(g) / d, b: Double(b) / d))
-        } } }
+        for r in 0..<size {
+            for g in 0..<size {
+                for b in 0..<size {
+                    nodes.append(RGB(r: Double(r) / d, g: Double(g) / d, b: Double(b) / d))
+                }
+            }
+        }
         return LUT3D(size: size, nodes: nodes)
     }
 
@@ -79,7 +85,9 @@ public struct LUT3D: Hashable, Codable, Sendable {
             let i = Swift.min(Int(x.rounded(.down)), size - 2)
             return (i, x - Double(i))
         }
-        let (ri, rf) = split(rgb.r), (gi, gf) = split(rgb.g), (bi, bf) = split(rgb.b)
+        let (ri, rf) = split(rgb.r)
+        let (gi, gf) = split(rgb.g)
+        let (bi, bf) = split(rgb.b)
         func lerp(_ a: RGB, _ b: RGB, _ t: Double) -> RGB { a * (1 - t) + b * t }
         let c00 = lerp(self[ri, gi, bi], self[ri + 1, gi, bi], rf)
         let c10 = lerp(self[ri, gi + 1, bi], self[ri + 1, gi + 1, bi], rf)

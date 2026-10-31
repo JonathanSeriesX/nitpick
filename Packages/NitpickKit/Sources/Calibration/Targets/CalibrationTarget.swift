@@ -1,5 +1,5 @@
-import Foundation
 import ColorScience
+import Foundation
 import PatternLink
 
 /// What a calibration aims for.
@@ -25,27 +25,39 @@ public struct CalibrationTarget: Codable, Hashable, Sendable {
     public var hdr10Metadata: HDR10StaticMetadata?
     public var hdrMapping: HDRMapping
 
-    public init(dynamicRange: DynamicRange, colorimetry: Colorimetry, eotf: TargetEOTF, whitePoint: Chromaticity = .d65,
-                peakWhite: Double, contentPrimaries: ColorSpacePrimaries? = nil, hdr10Metadata: HDR10StaticMetadata? = nil,
-                hdrMapping: HDRMapping = .rollOff) {
-        self.dynamicRange = dynamicRange; self.colorimetry = colorimetry; self.eotf = eotf; self.whitePoint = whitePoint
-        self.peakWhite = peakWhite; self.contentPrimaries = contentPrimaries; self.hdr10Metadata = hdr10Metadata
+    public init(
+        dynamicRange: DynamicRange, colorimetry: Colorimetry, eotf: TargetEOTF, whitePoint: Chromaticity = .d65,
+        peakWhite: Double, contentPrimaries: ColorSpacePrimaries? = nil, hdr10Metadata: HDR10StaticMetadata? = nil,
+        hdrMapping: HDRMapping = .rollOff
+    ) {
+        self.dynamicRange = dynamicRange
+        self.colorimetry = colorimetry
+        self.eotf = eotf
+        self.whitePoint = whitePoint
+        self.peakWhite = peakWhite
+        self.contentPrimaries = contentPrimaries
+        self.hdr10Metadata = hdr10Metadata
         self.hdrMapping = hdrMapping
     }
 
     /// BT.1886, 100 cd/m², D65. Black starts at 0; the workflow replaces it with the measured black (`withBlackLevel`).
-    public static let sdrMovie = CalibrationTarget(dynamicRange: .sdr, colorimetry: .bt709, eotf: .bt1886(white: 100, black: 0), peakWhite: 100)
+    public static let sdrMovie = CalibrationTarget(
+        dynamicRange: .sdr, colorimetry: .bt709, eotf: .bt1886(white: 100, black: 0), peakWhite: 100)
     /// Gamma 2.2, 150 cd/m², D65.
-    public static let sdrGame = CalibrationTarget(dynamicRange: .sdr, colorimetry: .bt709, eotf: .gamma(2.2, white: 150, black: 0), peakWhite: 150)
+    public static let sdrGame = CalibrationTarget(
+        dynamicRange: .sdr, colorimetry: .bt709, eotf: .gamma(2.2, white: 150, black: 0), peakWhite: 150)
     /// PQ with P3-D65 1000 cd/m² metadata; tone-mapped above the display peak.
-    public static let hdr10Movie = CalibrationTarget(dynamicRange: .hdr10, colorimetry: .bt2020, eotf: .pq, peakWhite: 1000,
-                                                     contentPrimaries: .dciP3D65, hdr10Metadata: .p3D65_1000, hdrMapping: .rollOff)
+    public static let hdr10Movie = CalibrationTarget(
+        dynamicRange: .hdr10, colorimetry: .bt2020, eotf: .pq, peakWhite: 1000,
+        contentPrimaries: .dciP3D65, hdr10Metadata: .p3D65_1000, hdrMapping: .rollOff)
     /// PQ, HGiG: hard clip at the display peak.
-    public static let hdr10Game = CalibrationTarget(dynamicRange: .hdr10, colorimetry: .bt2020, eotf: .pq, peakWhite: 1000,
-                                                    contentPrimaries: .dciP3D65, hdr10Metadata: .p3D65_1000, hdrMapping: .hardClip)
+    public static let hdr10Game = CalibrationTarget(
+        dynamicRange: .hdr10, colorimetry: .bt2020, eotf: .pq, peakWhite: 1000,
+        contentPrimaries: .dciP3D65, hdr10Metadata: .p3D65_1000, hdrMapping: .hardClip)
     /// Dolby Vision output, judged like HDR10 (frames are authored as PQ / BT.2020).
-    public static let dolbyVision = CalibrationTarget(dynamicRange: .dolbyVision, colorimetry: .bt2020, eotf: .pq, peakWhite: 1000,
-                                                      contentPrimaries: .dciP3D65, hdr10Metadata: .p3D65_1000, hdrMapping: .rollOff)
+    public static let dolbyVision = CalibrationTarget(
+        dynamicRange: .dolbyVision, colorimetry: .bt2020, eotf: .pq, peakWhite: 1000,
+        contentPrimaries: .dciP3D65, hdr10Metadata: .p3D65_1000, hdrMapping: .rollOff)
 
     public var isHDR: Bool { dynamicRange != .sdr }
 

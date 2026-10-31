@@ -1,6 +1,6 @@
+import ColorScience
 import Foundation
 import Synchronization
-import ColorScience
 
 /// A `Meter` that reads a `SimulatedPanel` (a Display Plus HL pointed at the screen centre).
 ///
@@ -29,7 +29,10 @@ public final class SimulatedMeter: Meter {
     }
 
     public var info: MeterInfo {
-        get async { MeterInfo(model: "Simulated Display Plus HL", serialNumber: "SIM-0001", firmware: "sim", maximumLuminance: 10_000, isSimulated: true) }
+        get async {
+            MeterInfo(
+                model: "Simulated Display Plus HL", serialNumber: "SIM-0001", firmware: "sim", maximumLuminance: 10_000, isSimulated: true)
+        }
     }
 
     /// Multiplies all noise σ (1 = the documented model).
@@ -65,7 +68,10 @@ public final class SimulatedMeter: Meter {
         try Task.checkCancellation()
         try state.withLock { s throws(any Error) in
             guard s.connected else { throw CalibrationError.notConnected("Meter") }
-            if let error = s.nextError { s.nextError = nil; throw error }
+            if let error = s.nextError {
+                s.nextError = nil
+                throw error
+            }
             if let n = s.readsUntilDropout {
                 s.readsUntilDropout = n - 1
                 if n <= 1 {
@@ -92,8 +98,9 @@ public final class SimulatedMeter: Meter {
             if L > 10_000 { flags.append("saturated") }
             // Per-channel relative noise: luminance σ, or the xy σ expressed as tristimulus noise (∂x/∂ln X ≈ 0.21 near white),
             // whichever is larger — both come from the same three sensor channels.
-            return MeterReading(xyz: xyz, timestamp: panel.clock.now, integrationTime: integration,
-                                noiseEstimate: max(sigmaL / max(Y, 0.002), sigmaXY / 0.21), flags: flags)
+            return MeterReading(
+                xyz: xyz, timestamp: panel.clock.now, integrationTime: integration,
+                noiseEstimate: max(sigmaL / max(Y, 0.002), sigmaXY / 0.21), flags: flags)
         }
     }
 }

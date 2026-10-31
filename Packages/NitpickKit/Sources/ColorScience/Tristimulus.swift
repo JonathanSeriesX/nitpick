@@ -7,7 +7,9 @@ public struct XYZ: Hashable, Codable, Sendable {
     public var Z: Double
 
     public init(X: Double, Y: Double, Z: Double) {
-        self.X = X; self.Y = Y; self.Z = Z
+        self.X = X
+        self.Y = Y
+        self.Z = Z
     }
 
     public static let zero = XYZ(X: 0, Y: 0, Z: 0)
@@ -32,7 +34,10 @@ public struct Chromaticity: Hashable, Codable, Sendable {
     public var x: Double
     public var y: Double
 
-    public init(x: Double, y: Double) { self.x = x; self.y = y }
+    public init(x: Double, y: Double) {
+        self.x = x
+        self.y = y
+    }
 
     /// D65 as defined by ITU-R BT.709 / BT.2020 (4-digit values).
     public static let d65 = Chromaticity(x: 0.3127, y: 0.3290)
@@ -57,7 +62,11 @@ public struct xyY: Hashable, Codable, Sendable {
     public var y: Double
     public var Y: Double
 
-    public init(x: Double, y: Double, Y: Double) { self.x = x; self.y = y; self.Y = Y }
+    public init(x: Double, y: Double, Y: Double) {
+        self.x = x
+        self.y = y
+        self.Y = Y
+    }
     public init(chromaticity c: Chromaticity, Y: Double) { self.init(x: c.x, y: c.y, Y: Y) }
 
     public var chromaticity: Chromaticity { Chromaticity(x: x, y: y) }
@@ -70,7 +79,11 @@ public struct RGB: Hashable, Codable, Sendable {
     public var g: Double
     public var b: Double
 
-    public init(r: Double, g: Double, b: Double) { self.r = r; self.g = g; self.b = b }
+    public init(r: Double, g: Double, b: Double) {
+        self.r = r
+        self.g = g
+        self.b = b
+    }
     public init(gray v: Double) { self.init(r: v, g: v, b: v) }
 
     public static let black = RGB(gray: 0)

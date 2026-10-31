@@ -1,5 +1,5 @@
-import Foundation
 import ColorScience
+import Foundation
 
 /// LG 2-point white balance: gains at a high stimulus, offsets at a low one, alternating passes (they interact),
 /// then a 10-point grayscale check. Luminance is left free (the target is chromaticity only).
@@ -11,7 +11,9 @@ public struct TwoPointWhiteBalance: Sendable {
     public var verificationStimuli: [Double] = (1...10).map { Double($0) / 10 }
 
     public init(highStimulus: Double = 0.8, lowStimulus: Double = 0.25, optimizer: WhiteBalanceOptimizer = WhiteBalanceOptimizer()) {
-        self.highStimulus = highStimulus; self.lowStimulus = lowStimulus; self.optimizer = optimizer
+        self.highStimulus = highStimulus
+        self.lowStimulus = lowStimulus
+        self.optimizer = optimizer
     }
 
     public struct Result: Sendable {
@@ -70,7 +72,8 @@ public struct TwentyPointWhiteBalance: Sendable {
     public var luminanceTolerance = 0.02
 
     public init(optimizer: WhiteBalanceOptimizer = WhiteBalanceOptimizer(), maxStimulus: Double = 1.0) {
-        self.optimizer = optimizer; self.maxStimulus = maxStimulus
+        self.optimizer = optimizer
+        self.maxStimulus = maxStimulus
     }
 
     public struct PointResult: Codable, Hashable, Sendable {
@@ -111,7 +114,8 @@ public struct TwentyPointWhiteBalance: Sendable {
         var readings: [Int: XYZ] = [:]
 
         func adjust(_ ire: Int) async throws {
-            let i = ire / 5 - 1, s = Double(ire) / 100
+            let i = ire / 5 - 1
+            let s = Double(ire) / 100
             let reference = ctx.grayReference(s)
             var opt = optimizer
             opt.bounds = ctx.bounds.whiteBalance
@@ -139,9 +143,12 @@ public struct TwentyPointWhiteBalance: Sendable {
         for ire in worst { try await adjust(ire) }
 
         let points = active.reversed().map { ire in
-            let s = Double(ire) / 100, reference = ctx.grayReference(s), xyz = readings[ire]!
-            return PointResult(ire: ire, deltaE: ctx.deltaE(xyz, reference), luminanceErrorPercent: (xyz.Y / reference.Y - 1) * 100,
-                               tolerance: tolerance(stimulus: s, luminance: reference.Y), controls: values[ire / 5 - 1])
+            let s = Double(ire) / 100
+            let reference = ctx.grayReference(s)
+            let xyz = readings[ire]!
+            return PointResult(
+                ire: ire, deltaE: ctx.deltaE(xyz, reference), luminanceErrorPercent: (xyz.Y / reference.Y - 1) * 100,
+                tolerance: tolerance(stimulus: s, luminance: reference.Y), controls: values[ire / 5 - 1])
         }
         return Result(values: values, points: points, secondPass: Array(worst), limitedByBounds: !limited.isEmpty)
     }

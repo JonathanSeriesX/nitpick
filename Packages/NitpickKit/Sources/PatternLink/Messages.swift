@@ -1,5 +1,5 @@
-import Foundation
 import ColorScience
+import Foundation
 
 /// Wire protocol version. Bump on incompatible changes; the server rejects mismatches with `LinkError.code == "version"`.
 public let patternLinkProtocolVersion = 1
@@ -12,7 +12,9 @@ public struct Hello: Hashable, Codable, Sendable {
     public var clientID: UUID
     public var protocolVersion: Int
     public init(clientName: String, clientID: UUID, protocolVersion: Int = patternLinkProtocolVersion) {
-        self.clientName = clientName; self.clientID = clientID; self.protocolVersion = protocolVersion
+        self.clientName = clientName
+        self.clientID = clientID
+        self.protocolVersion = protocolVersion
     }
 }
 
@@ -22,7 +24,8 @@ public struct DisplayModeRequest: Hashable, Codable, Sendable {
     /// Hz; nil = leave the refresh rate alone.
     public var refreshRate: Double?
     public init(dynamicRange: DynamicRange, refreshRate: Double? = nil) {
-        self.dynamicRange = dynamicRange; self.refreshRate = refreshRate
+        self.dynamicRange = dynamicRange
+        self.refreshRate = refreshRate
     }
 }
 
@@ -38,10 +41,16 @@ public struct DisplayModeState: Hashable, Codable, Sendable {
     public var potentialEDRHeadroom: Double?
     public var note: String?
 
-    public init(requested: DisplayModeRequest? = nil, switching: Bool = false, matchingEnabled: Bool = false,
-                currentEDRHeadroom: Double? = nil, potentialEDRHeadroom: Double? = nil, note: String? = nil) {
-        self.requested = requested; self.switching = switching; self.matchingEnabled = matchingEnabled
-        self.currentEDRHeadroom = currentEDRHeadroom; self.potentialEDRHeadroom = potentialEDRHeadroom; self.note = note
+    public init(
+        requested: DisplayModeRequest? = nil, switching: Bool = false, matchingEnabled: Bool = false,
+        currentEDRHeadroom: Double? = nil, potentialEDRHeadroom: Double? = nil, note: String? = nil
+    ) {
+        self.requested = requested
+        self.switching = switching
+        self.matchingEnabled = matchingEnabled
+        self.currentEDRHeadroom = currentEDRHeadroom
+        self.potentialEDRHeadroom = potentialEDRHeadroom
+        self.note = note
     }
 }
 
@@ -55,10 +64,17 @@ public struct DeviceCapabilities: Hashable, Codable, Sendable {
     public var supportsDisplayCriteria: Bool
     public var displayMode: DisplayModeState
 
-    public init(deviceName: String, model: String, systemVersion: String, protocolVersion: Int = patternLinkProtocolVersion,
-                frameWidth: Int, frameHeight: Int, supportsDisplayCriteria: Bool, displayMode: DisplayModeState) {
-        self.deviceName = deviceName; self.model = model; self.systemVersion = systemVersion; self.protocolVersion = protocolVersion
-        self.frameWidth = frameWidth; self.frameHeight = frameHeight; self.supportsDisplayCriteria = supportsDisplayCriteria
+    public init(
+        deviceName: String, model: String, systemVersion: String, protocolVersion: Int = patternLinkProtocolVersion,
+        frameWidth: Int, frameHeight: Int, supportsDisplayCriteria: Bool, displayMode: DisplayModeState
+    ) {
+        self.deviceName = deviceName
+        self.model = model
+        self.systemVersion = systemVersion
+        self.protocolVersion = protocolVersion
+        self.frameWidth = frameWidth
+        self.frameHeight = frameHeight
+        self.supportsDisplayCriteria = supportsDisplayCriteria
         self.displayMode = displayMode
     }
 }
@@ -71,27 +87,38 @@ public struct ShowAck: Hashable, Codable, Sendable {
     /// Code values actually written for the centre colour (after quantisation), when the pattern has one.
     public var centerCodes: [Int]?
     public init(sequence: UInt32, enqueuedAt: Date, centerCodes: [Int]?) {
-        self.sequence = sequence; self.enqueuedAt = enqueuedAt; self.centerCodes = centerCodes
+        self.sequence = sequence
+        self.enqueuedAt = enqueuedAt
+        self.centerCodes = centerCodes
     }
 }
 
 public struct PairRequest: Hashable, Codable, Sendable {
     public var clientName: String
     public var clientID: UUID
-    public init(clientName: String, clientID: UUID) { self.clientName = clientName; self.clientID = clientID }
+    public init(clientName: String, clientID: UUID) {
+        self.clientName = clientName
+        self.clientID = clientID
+    }
 }
 
 /// Long-term credential issued by the TV after a PIN-authenticated session; stored in the Mac Keychain.
 public struct PairResponse: Hashable, Codable, Sendable {
     public var token: Data
     public var deviceID: UUID
-    public init(token: Data, deviceID: UUID) { self.token = token; self.deviceID = deviceID }
+    public init(token: Data, deviceID: UUID) {
+        self.token = token
+        self.deviceID = deviceID
+    }
 }
 
 public struct LinkError: Error, Hashable, Codable, Sendable {
     public var code: String
     public var message: String
-    public init(code: String, message: String) { self.code = code; self.message = message }
+    public init(code: String, message: String) {
+        self.code = code
+        self.message = message
+    }
 }
 
 /// Mac → Apple TV.

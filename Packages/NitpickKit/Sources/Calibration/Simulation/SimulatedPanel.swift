@@ -1,7 +1,7 @@
-import Foundation
-import Synchronization
 import ColorScience
+import Foundation
 import PatternLink
+import Synchronization
 
 /// A parametric LG-WOLED-like TV panel driven by the simulated pattern source, TV controller and meter.
 ///
@@ -57,13 +57,18 @@ public final class SimulatedPanel: Sendable {
 
         func steadyState(for pattern: PatternSpec) -> XYZ {
             guard input == SimulatedPanel.sourceInput, let profile = ModeProfile.all[mode] else { return PanelPipeline.black }
-            return PanelPipeline.xyz(signal: pattern.content.meteredColor, format: pattern.format, metadata: pattern.hdr10Metadata,
-                                     path: path, profile: profile, controls: ModeControls(settings[mode] ?? profile.defaults),
-                                     calibration: calibration[mode] ?? ModeCalibration())
+            return PanelPipeline.xyz(
+                signal: pattern.content.meteredColor, format: pattern.format, metadata: pattern.hdr10Metadata,
+                path: path, profile: profile, controls: ModeControls(settings[mode] ?? profile.defaults),
+                calibration: calibration[mode] ?? ModeCalibration())
         }
 
         mutating func recompute() {
-            guard let pattern else { steady = PanelPipeline.black; steadyABL = 1; return }
+            guard let pattern else {
+                steady = PanelPipeline.black
+                steadyABL = 1
+                return
+            }
             steady = steadyState(for: pattern)
             let limit = 160 / pow(max(pattern.content.lightArea, 0.001), 0.8)
             steadyABL = steady.Y > limit ? limit / steady.Y : 1
@@ -127,7 +132,8 @@ public final class SimulatedPanel: Sendable {
         try mutate { s in
             guard let profile = ModeProfile.all[mode] else { throw CalibrationError.outOfRange(key: "pictureMode", value: mode) }
             guard profile.path == s.path else {
-                throw CalibrationError.invalidState("\(mode) is a \(profile.path.displayName) picture mode but the TV is receiving \(s.path.displayName)")
+                throw CalibrationError.invalidState(
+                    "\(mode) is a \(profile.path.displayName) picture mode but the TV is receiving \(s.path.displayName)")
             }
             s.modes[s.path] = mode
         }
@@ -148,7 +154,9 @@ public final class SimulatedPanel: Sendable {
             func profile(_ mode: String, upload: Bool, path: DynamicRange? = nil) throws -> ModeProfile {
                 guard let p = ModeProfile.all[mode] else { throw CalibrationError.invalidState("Unknown picture mode \(mode)") }
                 guard upload else { return p }
-                guard s.calibrating == mode else { throw CalibrationError.invalidState("CAL_START for \(mode) is required before uploading") }
+                guard s.calibrating == mode else {
+                    throw CalibrationError.invalidState("CAL_START for \(mode) is required before uploading")
+                }
                 if p.isGame && !allowGameMode { throw CalibrationError.refused("\(mode) (Game Optimizer) refuses calibration uploads") }
                 if let path, p.path != path { throw CalibrationError.invalidState("\(mode) does not accept this data") }
                 if path == nil, p.path == .dolbyVision { throw CalibrationError.invalidState("Dolby Vision modes take only a DV config") }
@@ -178,14 +186,18 @@ public final class SimulatedPanel: Sendable {
             case .setToneMap(let params, let mode):
                 _ = try profile(mode, upload: true, path: .hdr10)
                 guard (100...10000).contains(params.displayLuminance), (100...10000).contains(params.masteringPeak),
-                      (0...100).contains(params.rolloffPoint) else { throw CalibrationError.outOfRange(key: "tonemap", value: "\(params)") }
+                    (0...100).contains(params.rolloffPoint)
+                else { throw CalibrationError.outOfRange(key: "tonemap", value: "\(params)") }
                 s.calibration[mode, default: ModeCalibration()].toneMap = params
             case .setDolbyVisionConfig(let config, let mode):
                 _ = try profile(mode, upload: true, path: .dolbyVision)
-                let area = abs((config.green.x - config.red.x) * (config.blue.y - config.red.y)
-                               - (config.blue.x - config.red.x) * (config.green.y - config.red.y)) / 2
+                let area =
+                    abs(
+                        (config.green.x - config.red.x) * (config.blue.y - config.red.y)
+                            - (config.blue.x - config.red.x) * (config.green.y - config.red.y)) / 2
                 guard (100...10000).contains(config.whiteLevel), (0...1).contains(config.blackLevel),
-                      (1.8...2.8).contains(config.gamma), area > 0.01, config.white.y > 0 else {
+                    (1.8...2.8).contains(config.gamma), area > 0.01, config.white.y > 0
+                else {
                     throw CalibrationError.outOfRange(key: "Dolby Vision config", value: "\(config)")
                 }
                 s.calibration[mode, default: ModeCalibration()].dolbyVision = config

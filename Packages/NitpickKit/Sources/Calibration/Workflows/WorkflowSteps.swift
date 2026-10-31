@@ -1,5 +1,5 @@
-import Foundation
 import ColorScience
+import Foundation
 
 /// What the per-mode adjustment stage produced.
 struct AdjustOutcome {
@@ -47,7 +47,8 @@ extension CalibrationContext {
         for signal in [SignalRGB(r: 1, g: 0, b: 0), SignalRGB(r: 0, g: 1, b: 0), SignalRGB(r: 0, g: 0, b: 1)] {
             primaries.append(try await careful.measure(signal, reference: target.reference(signal)).xyz)
         }
-        let (lut, report) = try GrayscaleLUTBuilder().build(grayscale: gray, primaries: (primaries[0], primaries[1], primaries[2]), target: target)
+        let (lut, report) = try GrayscaleLUTBuilder().build(
+            grayscale: gray, primaries: (primaries[0], primaries[1], primaries[2]), target: target)
         report.warnings.forEach { emit(.warning($0)) }
         try await upload(.upload1DLUT(lut, pictureMode: pictureMode), "1D LUT \(pictureMode)")
         var outcome = AdjustOutcome(lut1D: lut)
@@ -57,8 +58,12 @@ extension CalibrationContext {
         var grid: [XYZ] = []
         for signal in builder.gridSignals() { grid.append(try await careful.measure(signal, reference: target.reference(signal)).xyz) }
         let (cube, cubeReport) = try builder.build(measurements: grid, target: target, lut1D: lut)
-        if cubeReport.clippedNodes > 0 { emit(.warning("\(cubeReport.clippedNodes) 3D LUT nodes lie outside the panel gamut and were pulled toward grey")) }
-        try await upload(.upload3DLUT(cube, colorimetry: target.colorimetry, pictureMode: pictureMode), "3D LUT \(cube.size)³ \(target.colorimetry.rawValue) \(pictureMode)")
+        if cubeReport.clippedNodes > 0 {
+            emit(.warning("\(cubeReport.clippedNodes) 3D LUT nodes lie outside the panel gamut and were pulled toward grey"))
+        }
+        try await upload(
+            .upload3DLUT(cube, colorimetry: target.colorimetry, pictureMode: pictureMode),
+            "3D LUT \(cube.size)³ \(target.colorimetry.rawValue) \(pictureMode)")
         outcome.lut3D = cube
         return outcome
     }
@@ -86,11 +91,16 @@ extension CalibrationContext {
     func hdrGame() async throws -> AdjustOutcome {
         let tone = try await analyzeTone()
         if !tone.isHardClip {
-            emit(.warning(String(format: "Expected an HGiG hard clip but the TV rolls off from %.0f cd/m²; check Dynamic Tone Mapping = HGIG", tone.kneeLuminance)))
+            emit(
+                .warning(
+                    String(
+                        format: "Expected an HGiG hard clip but the TV rolls off from %.0f cd/m²; check Dynamic Tone Mapping = HGIG",
+                        tone.kneeLuminance)))
         }
         let top = PQ.inverseEOTF(0.95 * min(tone.kneeLuminance, tone.peakLuminance))
-        var twoPoint = TwoPointWhiteBalance(highStimulus: (PQ.inverseEOTF(0.5 * tone.peakLuminance) * 100).rounded() / 100,
-                                            lowStimulus: 0.25, optimizer: WhiteBalanceOptimizer(tolerance: 1.0))
+        var twoPoint = TwoPointWhiteBalance(
+            highStimulus: (PQ.inverseEOTF(0.5 * tone.peakLuminance) * 100).rounded() / 100,
+            lowStimulus: 0.25, optimizer: WhiteBalanceOptimizer(tolerance: 1.0))
         twoPoint.verificationStimuli = twoPoint.verificationStimuli.filter { $0 <= top }
         _ = try await twoPoint.run(self)
         _ = try await TwentyPointWhiteBalance(optimizer: WhiteBalanceOptimizer(tolerance: 1.0), maxStimulus: top).run(self)
@@ -99,7 +109,9 @@ extension CalibrationContext {
 
     /// Dolby Vision: config from the source HDR10 measurements, uploaded to this mode.
     func dolbyVision(_ source: MeasurementSet?) async throws -> AdjustOutcome {
-        guard let source else { throw CalibrationError.precondition("Dolby Vision needs the measurements of a completed HDR10 movie session") }
+        guard let source else {
+            throw CalibrationError.precondition("Dolby Vision needs the measurements of a completed HDR10 movie session")
+        }
         let (config, warnings) = try DolbyVisionConfigBuilder().build(from: source)
         warnings.forEach { emit(.warning($0)) }
         try await upload(.setDolbyVisionConfig(config, pictureMode: pictureMode), "Dolby Vision config \(pictureMode)")
@@ -111,8 +123,12 @@ extension CalibrationContext {
         var readings: [(stimulus: Double, xyz: XYZ)] = []
         for s in HDRToneAnalyzer.stimuli { readings.append((target.quantizedGray(s), try await measureGray(s).xyz)) }
         let report = HDRToneAnalyzer().analyze(readings, metadata: target.hdr10Metadata, whitePoint: target.whitePoint)
-        emit(.progress(fraction: 0, message: String(format: "Peak %.0f cd/m², knee %.0f cd/m²%@", report.peakLuminance,
-                                                     report.kneeLuminance, report.isHardClip ? ", hard clip" : "")))
+        emit(
+            .progress(
+                fraction: 0,
+                message: String(
+                    format: "Peak %.0f cd/m², knee %.0f cd/m²%@", report.peakLuminance,
+                    report.kneeLuminance, report.isHardClip ? ", hard clip" : "")))
         return report
     }
 
@@ -122,15 +138,23 @@ extension CalibrationContext {
         let settings = try await readSettings()
         var light = settings.int(PictureKey.backlight) ?? 50
         var contrast = settings.int(PictureKey.contrast) ?? 85
-        var lo = bounds.oledLight.lowerBound, hi = bounds.oledLight.upperBound
+        var lo = bounds.oledLight.lowerBound
+        var hi = bounds.oledLight.upperBound
         var best: Int?
         while lo <= hi {
             let mid = (lo + hi) / 2
-            try await write(keys: [PictureKey.backlight], values: [mid], previous: [light]); light = mid
-            if try await measureGray(1).luminance >= goal { best = mid; hi = mid - 1 } else { lo = mid + 1 }
+            try await write(keys: [PictureKey.backlight], values: [mid], previous: [light])
+            light = mid
+            if try await measureGray(1).luminance >= goal {
+                best = mid
+                hi = mid - 1
+            } else {
+                lo = mid + 1
+            }
         }
         let chosen = best ?? bounds.oledLight.upperBound
-        try await write(keys: [PictureKey.backlight], values: [chosen], previous: [light]); light = chosen
+        try await write(keys: [PictureKey.backlight], values: [chosen], previous: [light])
+        light = chosen
         guard best != nil else {
             emit(.warning(String(format: "Peak white stays below %.0f cd/m² at the highest allowed OLED light", goal)))
             return
@@ -140,7 +164,8 @@ extension CalibrationContext {
             let steps = Int((log(y / goal) / (2.4 * 0.004)).rounded())
             let next = bounds.clamp(PictureKey.contrast, contrast - steps)
             guard steps != 0, next != contrast else { break }
-            try await write(keys: [PictureKey.contrast], values: [next], previous: [contrast]); contrast = next
+            try await write(keys: [PictureKey.contrast], values: [next], previous: [contrast])
+            contrast = next
             y = try await measureGray(1).luminance
         }
     }

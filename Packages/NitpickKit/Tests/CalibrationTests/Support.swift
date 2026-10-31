@@ -1,7 +1,8 @@
-import Foundation
-import Testing
 import ColorScience
+import Foundation
 import PatternLink
+import Testing
+
 @testable import Calibration
 
 /// A complete simulated setup on one virtual clock.
@@ -44,10 +45,14 @@ struct Rig {
 
 /// Runs a workflow to its terminal event. `onEvent` may act on events (e.g. answer `.needsUser`).
 @discardableResult
-func runWorkflow(_ runner: WorkflowRunner, _ profile: SessionProfile, _ rig: Rig, session: CalibrationSession? = nil,
-                 onEvent: (WorkflowEvent) throws -> Void = { _ in }) async throws -> [WorkflowEvent] {
+func runWorkflow(
+    _ runner: WorkflowRunner, _ profile: SessionProfile, _ rig: Rig, session: CalibrationSession? = nil,
+    onEvent: (WorkflowEvent) throws -> Void = { _ in }
+) async throws -> [WorkflowEvent] {
     var events: [WorkflowEvent] = []
-    for try await event in runner.run(profile: profile, devices: rig.devices, session: session ?? CalibrationSession(profile: profile), sleeper: rig.clock) {
+    for try await event in runner.run(
+        profile: profile, devices: rig.devices, session: session ?? CalibrationSession(profile: profile), sleeper: rig.clock)
+    {
         events.append(event)
         try onEvent(event)
     }
@@ -75,7 +80,8 @@ func temporaryDirectory() -> URL {
 
 func describe(_ set: MeasurementSet) -> String {
     let s = set.summary
-    return String(format: "gray max %.2f avg %.2f | colour max %.2f p95 %.2f avg %.2f | gamma %@ | track %.2f%% max %.2f%% | peak %.1f",
-                  s.grayscaleMaxDeltaE, s.grayscaleAverageDeltaE, s.maxDeltaE, s.p95DeltaE, s.averageDeltaE,
-                  s.averageGamma.map { String(format: "%.3f", $0) } ?? "-", s.eotfTrackingErrorPercent, s.maxLuminanceErrorPercent, set.peakLuminance)
+    return String(
+        format: "gray max %.2f avg %.2f | colour max %.2f p95 %.2f avg %.2f | gamma %@ | track %.2f%% max %.2f%% | peak %.1f",
+        s.grayscaleMaxDeltaE, s.grayscaleAverageDeltaE, s.maxDeltaE, s.p95DeltaE, s.averageDeltaE,
+        s.averageGamma.map { String(format: "%.3f", $0) } ?? "-", s.eotfTrackingErrorPercent, s.maxLuminanceErrorPercent, set.peakLuminance)
 }

@@ -1,5 +1,5 @@
-import Foundation
 import ColorScience
+import Foundation
 
 /// How an HDR10 grayscale run tracks PQ and where the TV starts tone mapping.
 public struct HDRToneReport: Codable, Hashable, Sendable {
@@ -38,7 +38,9 @@ public struct HDRToneAnalyzer: Sendable {
     /// Standard HDR grayscale plus 1 % steps from 50 to 85 % PQ, where knees and clips sit on consumer TVs.
     public static let stimuli: [Double] = Array(Set(Stimuli.grayscale(.hdr10) + (50...85).map { Double($0) / 100 })).sorted()
 
-    public func analyze(_ readings: [(stimulus: Double, xyz: XYZ)], metadata: HDR10StaticMetadata?, whitePoint: Chromaticity = .d65) -> HDRToneReport {
+    public func analyze(_ readings: [(stimulus: Double, xyz: XYZ)], metadata: HDR10StaticMetadata?, whitePoint: Chromaticity = .d65)
+        -> HDRToneReport
+    {
         let sorted = readings.sorted { $0.stimulus < $1.stimulus }
         let top = sorted.map(\.xyz.Y).max() ?? 0
         let plateau = sorted.map(\.xyz.Y).filter { $0 >= 0.98 * top }.sorted()
@@ -64,8 +66,9 @@ public struct HDRToneAnalyzer: Sendable {
         let points = sorted.map { p -> HDRToneReport.Point in
             let ref = PQ.eotf(p.stimulus)
             let region: HDRToneReport.Region = ref <= knee ? .tracking : (p.xyz.Y >= 0.98 * peak && ref > peak ? .clipped : .rollOff)
-            return HDRToneReport.Point(stimulus: p.stimulus, reference: ref, measured: p.xyz.Y, region: region,
-                                       deltaEITP: CIE.deltaEITP(CIE.ictcp(p.xyz), CIE.ictcp(whitePoint.xyz(Y: ref))))
+            return HDRToneReport.Point(
+                stimulus: p.stimulus, reference: ref, measured: p.xyz.Y, region: region,
+                deltaEITP: CIE.deltaEITP(CIE.ictcp(p.xyz), CIE.ictcp(whitePoint.xyz(Y: ref))))
         }
         let tracking = points.filter { $0.region == .tracking }
         let tracked = tracking.filter { $0.reference >= 1 }.map { abs($0.measured / $0.reference - 1) * 100 }
@@ -75,8 +78,9 @@ public struct HDRToneAnalyzer: Sendable {
             points: points, peakLuminance: peak, kneeLuminance: knee, isHardClip: knee >= 0.95 * peak,
             trackingErrorPercent: tracked.isEmpty ? 0 : tracked.reduce(0, +) / Double(tracked.count),
             maxDeltaEITPBelowKnee: itp.max() ?? 0, averageDeltaEITPBelowKnee: itp.isEmpty ? 0 : itp.reduce(0, +) / Double(itp.count),
-            proposed: ToneMapParameters(displayLuminance: Int((peak / 10).rounded()) * 10, masteringPeak: mastering,
-                                        rolloffPoint: min(100, max(50, Int((knee / max(peak, 1) * 100).rounded())))))
+            proposed: ToneMapParameters(
+                displayLuminance: Int((peak / 10).rounded()) * 10, masteringPeak: mastering,
+                rolloffPoint: min(100, max(50, Int((knee / max(peak, 1) * 100).rounded())))))
     }
 }
 
@@ -100,13 +104,17 @@ public struct DolbyVisionConfigBuilder: Sendable {
         }
         var warnings: [String] = []
         let peak = set.peakLuminance.clamped(300, 4000)
-        if peak != set.peakLuminance { warnings.append(String(format: "Measured peak %.0f cd/m² clamped to %.0f", set.peakLuminance, peak)) }
+        if peak != set.peakLuminance {
+            warnings.append(String(format: "Measured peak %.0f cd/m² clamped to %.0f", set.peakLuminance, peak))
+        }
         let black = set.blackLevel.clamped(0, 0.05)
         if black != set.blackLevel { warnings.append(String(format: "Measured black %.4f cd/m² clamped to %.4f", set.blackLevel, black)) }
-        let white = set.grayscale.filter { !$0.error.inRollOff && $0.stimulus >= 0.049 }.max { $0.reading.luminance < $1.reading.luminance }?
+        let white =
+            set.grayscale.filter { !$0.error.inRollOff && $0.stimulus >= 0.049 }.max { $0.reading.luminance < $1.reading.luminance }?
             .reading.chromaticity ?? .d65
-        let config = DolbyVisionConfig(whiteLevel: peak, blackLevel: black, gamma: (sdrGamma ?? gamma).clamped(2.0, 2.6),
-                                       red: try primary("Red"), green: try primary("Green"), blue: try primary("Blue"), white: white)
+        let config = DolbyVisionConfig(
+            whiteLevel: peak, blackLevel: black, gamma: (sdrGamma ?? gamma).clamped(2.0, 2.6),
+            red: try primary("Red"), green: try primary("Green"), blue: try primary("Blue"), white: white)
         return (config, warnings)
     }
 }

@@ -1,5 +1,5 @@
-import Foundation
 import ColorScience
+import Foundation
 
 /// Standard stimulus sets. Signals are normalised R′G′B′ in the target's container (BT.709 SDR, BT.2020 PQ HDR).
 public enum Stimuli {
@@ -11,15 +11,22 @@ public enum Stimuli {
 
     public static let nearBlack = [0.01, 0.02, 0.03, 0.04]
 
-    static let hues: [(String, RGB)] = [("Red", RGB(r: 1, g: 0, b: 0)), ("Green", RGB(r: 0, g: 1, b: 0)), ("Blue", RGB(r: 0, g: 0, b: 1)),
-                                        ("Cyan", RGB(r: 0, g: 1, b: 1)), ("Magenta", RGB(r: 1, g: 0, b: 1)), ("Yellow", RGB(r: 1, g: 1, b: 0))]
+    static let hues: [(String, RGB)] = [
+        ("Red", RGB(r: 1, g: 0, b: 0)), ("Green", RGB(r: 0, g: 1, b: 0)), ("Blue", RGB(r: 0, g: 0, b: 1)),
+        ("Cyan", RGB(r: 0, g: 1, b: 1)), ("Magenta", RGB(r: 1, g: 0, b: 1)), ("Yellow", RGB(r: 1, g: 1, b: 0)),
+    ]
 
     /// SDR: R, G, B, C, M, Y at 100 % and 75 % signal. HDR: the BT.2020 container primaries/secondaries at 100 % and
     /// 75 % saturation at 50 % PQ — they probe the display's native gamut limits (used by the Dolby Vision builder).
     public static func primariesSecondaries(_ target: CalibrationTarget) -> [(name: String, signal: SignalRGB)] {
         if target.isHDR {
             return [1.0, 0.75].flatMap { sat in
-                hues.map { ("\($0.0) \(Int(sat * 100))%", desaturated($0.1, saturation: sat, nits: PQ.eotf(0.5), in: target.primaries, target: target)) }
+                hues.map {
+                    (
+                        "\($0.0) \(Int(sat * 100))%",
+                        desaturated($0.1, saturation: sat, nits: PQ.eotf(0.5), in: target.primaries, target: target)
+                    )
+                }
             }
         }
         return [1.0, 0.75].flatMap { level in hues.map { ("\($0.0) \(Int(level * 100))%", SignalRGB($0.1 * level)) } }
@@ -31,7 +38,9 @@ public enum Stimuli {
         let space = target.isHDR ? (target.contentPrimaries ?? .dciP3D65) : target.primaries
         let nits = target.isHDR ? PQ.eotf(0.5) : target.eotf.luminance(forSignal: 0.75) - target.eotf.luminance(forSignal: 0)
         return hues.flatMap { hue in
-            [0.25, 0.5, 0.75, 1.0].map { sat in ("\(hue.0) \(Int(sat * 100))% sat", desaturated(hue.1, saturation: sat, nits: nits, in: space, target: target)) }
+            [0.25, 0.5, 0.75, 1.0].map { sat in
+                ("\(hue.0) \(Int(sat * 100))% sat", desaturated(hue.1, saturation: sat, nits: nits, in: space, target: target))
+            }
         }
     }
 
@@ -40,7 +49,8 @@ public enum Stimuli {
     public static func verification(_ target: CalibrationTarget, seed: UInt64 = 0x5EED_C0DE) -> [(name: String, signal: SignalRGB)] {
         let white = target.isHDR ? 100 : target.eotf.luminance(forSignal: 1) - target.eotf.luminance(forSignal: 0)
         var out = colorChecker.map { patch -> (name: String, signal: SignalRGB) in
-            let linear = RGB(r: SRGB.decode(Double(patch.1) / 255), g: SRGB.decode(Double(patch.2) / 255), b: SRGB.decode(Double(patch.3) / 255))
+            let linear = RGB(
+                r: SRGB.decode(Double(patch.1) / 255), g: SRGB.decode(Double(patch.2) / 255), b: SRGB.decode(Double(patch.3) / 255))
             return (patch.0, encode(ColorSpacePrimaries.bt709.xyz(fromLinear: linear) * white, target: target))
         }
         var random = SeededRandom(seed: seed)
@@ -58,7 +68,9 @@ public enum Stimuli {
     }
 
     /// `hue` (unit linear RGB in `space`) at `nits` cd/m² per full channel, mixed with the equal-luminance grey.
-    static func desaturated(_ hue: RGB, saturation: Double, nits: Double, in space: ColorSpacePrimaries, target: CalibrationTarget) -> SignalRGB {
+    static func desaturated(_ hue: RGB, saturation: Double, nits: Double, in space: ColorSpacePrimaries, target: CalibrationTarget)
+        -> SignalRGB
+    {
         let full = space.xyz(fromLinear: hue * nits)
         let gray = space.white.xyz(Y: full.Y)
         return encode(gray + (full - gray) * saturation, target: target)

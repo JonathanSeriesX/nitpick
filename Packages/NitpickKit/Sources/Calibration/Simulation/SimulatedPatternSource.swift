@@ -1,7 +1,7 @@
-import Foundation
-import Synchronization
 import ColorScience
+import Foundation
 import PatternLink
+import Synchronization
 
 /// A `PatternSource` that puts patterns straight onto a `SimulatedPanel` (an Apple TV on `SimulatedPanel.sourceInput`).
 ///
@@ -39,8 +39,9 @@ public final class SimulatedPatternSource: PatternSource {
         get async {
             state.withLock { s in
                 guard s.connected else { return nil }
-                return DeviceCapabilities(deviceName: "Simulated Apple TV 4K", model: "AppleTV14,1", systemVersion: "tvOS (simulated)",
-                                          frameWidth: 3840, frameHeight: 2160, supportsDisplayCriteria: true, displayMode: s.mode)
+                return DeviceCapabilities(
+                    deviceName: "Simulated Apple TV 4K", model: "AppleTV14,1", systemVersion: "tvOS (simulated)",
+                    frameWidth: 3840, frameHeight: 2160, supportsDisplayCriteria: true, displayMode: s.mode)
             }
         }
     }
@@ -71,15 +72,17 @@ public final class SimulatedPatternSource: PatternSource {
         }
         guard matching else {
             return state.withLock { s in
-                s.mode = DisplayModeState(requested: request, matchingEnabled: false, currentEDRHeadroom: s.mode.currentEDRHeadroom,
-                                          note: "Match Dynamic Range is off; output unchanged")
+                s.mode = DisplayModeState(
+                    requested: request, matchingEnabled: false, currentEDRHeadroom: s.mode.currentEDRHeadroom,
+                    note: "Match Dynamic Range is off; output unchanged")
                 return s.mode
             }
         }
         guard request.dynamicRange == .sdr || request.dynamicRange == .hdr10 else {
             return state.withLock { s in
-                s.mode = DisplayModeState(requested: request, matchingEnabled: true, currentEDRHeadroom: s.mode.currentEDRHeadroom,
-                                          note: "\(request.dynamicRange.displayName) output must be selected in the Apple TV settings")
+                s.mode = DisplayModeState(
+                    requested: request, matchingEnabled: true, currentEDRHeadroom: s.mode.currentEDRHeadroom,
+                    note: "\(request.dynamicRange.displayName) output must be selected in the Apple TV settings")
                 return s.mode
             }
         }
@@ -88,8 +91,9 @@ public final class SimulatedPatternSource: PatternSource {
             try panel.setSignalPath(request.dynamicRange)
         }
         return state.withLock { s in
-            s.mode = DisplayModeState(requested: request, matchingEnabled: true, currentEDRHeadroom: request.dynamicRange == .sdr ? 1 : 8,
-                                      potentialEDRHeadroom: 8)
+            s.mode = DisplayModeState(
+                requested: request, matchingEnabled: true, currentEDRHeadroom: request.dynamicRange == .sdr ? 1 : 8,
+                potentialEDRHeadroom: 8)
             return s.mode
         }
     }
@@ -100,8 +104,9 @@ public final class SimulatedPatternSource: PatternSource {
     public func simulateUserSelectsOutput(_ dynamicRange: DynamicRange) throws {
         try panel.setSignalPath(dynamicRange)
         state.withLock { s in
-            s.mode = DisplayModeState(requested: DisplayModeRequest(dynamicRange: dynamicRange), matchingEnabled: s.matchingEnabled,
-                                      currentEDRHeadroom: dynamicRange == .sdr ? 1 : 8, potentialEDRHeadroom: 8)
+            s.mode = DisplayModeState(
+                requested: DisplayModeRequest(dynamicRange: dynamicRange), matchingEnabled: s.matchingEnabled,
+                currentEDRHeadroom: dynamicRange == .sdr ? 1 : 8, potentialEDRHeadroom: 8)
         }
     }
 
@@ -110,7 +115,8 @@ public final class SimulatedPatternSource: PatternSource {
         switch content {
         case .window(let patch, let window, let background): return .window(patch: q(patch), window: window, background: q(background))
         case .fullField(let c): return .fullField(q(c))
-        case .ramp(let steps, let from, let to, let horizontal): return .ramp(steps: steps, from: q(from), to: q(to), horizontal: horizontal)
+        case .ramp(let steps, let from, let to, let horizontal):
+            return .ramp(steps: steps, from: q(from), to: q(to), horizontal: horizontal)
         case .bars(let bars, let background): return .bars(bars.map(q), background: q(background))
         case .black: return .black
         }

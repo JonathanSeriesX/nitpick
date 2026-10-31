@@ -2,12 +2,14 @@ import Foundation
 
 /// Spectral power distributions sampled at uniform wavelength steps (one row per sample, e.g. R, G, B, W of a display).
 public struct SpectralSamples: Hashable, Codable, Sendable {
-    public var startWavelength: Double   // nm
-    public var step: Double              // nm
+    public var startWavelength: Double  // nm
+    public var step: Double  // nm
     public var rows: [[Double]]
 
     public init(startWavelength: Double, step: Double, rows: [[Double]]) {
-        self.startWavelength = startWavelength; self.step = step; self.rows = rows
+        self.startWavelength = startWavelength
+        self.step = step
+        self.rows = rows
     }
 
     public var count: Int { rows.first?.count ?? 0 }
@@ -30,6 +32,9 @@ public struct ColorimeterCorrection: Hashable, Codable, Sendable {
     public var source: String?
 
     public init(name: String, displayTechnology: String? = nil, kind: Kind, source: String? = nil) {
-        self.name = name; self.displayTechnology = displayTechnology; self.kind = kind; self.source = source
+        self.name = name
+        self.displayTechnology = displayTechnology
+        self.kind = kind
+        self.source = source
     }
 }

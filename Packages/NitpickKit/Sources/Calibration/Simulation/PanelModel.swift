@@ -1,5 +1,5 @@
-import Foundation
 import ColorScience
+import Foundation
 import PatternLink
 
 /// Synthetic error profile and factory defaults of one simulated picture mode.
@@ -43,37 +43,51 @@ struct ModeProfile: Sendable {
     static let all: [String: ModeProfile] = Dictionary(uniqueKeysWithValues: list.map { ($0.id, $0) })
 
     static let list: [ModeProfile] = [
-        ModeProfile(id: "expert1", path: .sdr, gammaOffset: -0.10, sCurve: 0.03,
-                    bumps: [Bump(center: 0.45, width: 0.09, amplitude: RGB(r: 0.025, g: 0, b: -0.01)),
-                            Bump(center: 0.75, width: 0.08, amplitude: RGB(r: 0, g: -0.015, b: 0.012))],
-                    lowEndTint: RGB(r: 0, g: 0, b: 0.10), white: Chromaticity(x: 0.3155, y: 0.3290),
-                    primaryShift: [0.004, -0.002, -0.005, 0.010, -0.002, -0.004], defaults: settings(backlight: 30, gamma: "bt1886")),
-        ModeProfile(id: "expert2", path: .sdr, gammaOffset: -0.06, sCurve: 0.02,
-                    bumps: [Bump(center: 0.5, width: 0.1, amplitude: RGB(r: 0.015, g: 0, b: 0))],
-                    lowEndTint: RGB(r: 0, g: 0, b: 0.06), white: Chromaticity(x: 0.3145, y: 0.3300),
-                    primaryShift: [0.003, -0.001, -0.003, 0.006, -0.001, -0.002], defaults: settings(backlight: 50, gamma: "bt1886")),
-        ModeProfile(id: "cinema", path: .sdr, gammaOffset: 0.05, sCurve: -0.02, white: Chromaticity(x: 0.3170, y: 0.3310),
-                    primaryShift: [0.008, -0.004, -0.006, 0.015, 0.002, 0.006], defaults: settings(backlight: 60, gamma: "medium")),
-        ModeProfile(id: "filmMaker", path: .sdr, gammaOffset: -0.04, sCurve: 0.015, white: Chromaticity(x: 0.3138, y: 0.3285),
-                    primaryShift: [0.002, 0, 0.003, 0.005, 0, 0.002], defaults: settings(backlight: 35, gamma: "bt1886")),
-        ModeProfile(id: "game", path: .sdr, isGame: true, gammaOffset: -0.05, sCurve: 0.02,
-                    bumps: [Bump(center: 0.2, width: 0.08, amplitude: RGB(r: 0, g: -0.025, b: 0.01)),
-                            Bump(center: 0.6, width: 0.09, amplitude: RGB(r: 0.015, g: 0, b: 0.02))],
-                    lowEndTint: RGB(r: 0.04, g: 0, b: 0), white: Chromaticity(x: 0.3085, y: 0.3300),
-                    primaryShift: [0.012, -0.005, -0.010, 0.020, -0.002, 0.003], defaults: settings(backlight: 100, gamma: "medium")),
-        ModeProfile(id: "hdr_cinema", path: .hdr10, tracking: 0.04,
-                    bumps: [Bump(center: 0.3, width: 0.08, amplitude: RGB(r: 0.01, g: -0.01, b: 0))],
-                    white: Chromaticity(x: 0.3120, y: 0.3320), defaults: settings(backlight: 100, toneMapping: "off")),
-        ModeProfile(id: "hdr_filmMaker", path: .hdr10, tracking: 0.02, white: Chromaticity(x: 0.3135, y: 0.3305),
-                    defaults: settings(backlight: 100, toneMapping: "off")),
-        ModeProfile(id: "hdr_game", path: .hdr10, isGame: true, tracking: 0.01,
-                    bumps: [Bump(center: 0.4, width: 0.1, amplitude: RGB(r: 0, g: 0.015, b: -0.01))],
-                    lowEndTint: RGB(r: 0.08, g: 0, b: 0.08), white: Chromaticity(x: 0.3110, y: 0.3270),
-                    defaults: settings(backlight: 100, toneMapping: "HGIG")),
-        ModeProfile(id: "dolby_cinema_dark", path: .dolbyVision, white: Chromaticity(x: 0.3135, y: 0.3300),
-                    defaults: settings(backlight: 100)),
-        ModeProfile(id: "dolby_game", path: .dolbyVision, isGame: true, white: Chromaticity(x: 0.3100, y: 0.3280),
-                    defaults: settings(backlight: 100)),
+        ModeProfile(
+            id: "expert1", path: .sdr, gammaOffset: -0.10, sCurve: 0.03,
+            bumps: [
+                Bump(center: 0.45, width: 0.09, amplitude: RGB(r: 0.025, g: 0, b: -0.01)),
+                Bump(center: 0.75, width: 0.08, amplitude: RGB(r: 0, g: -0.015, b: 0.012)),
+            ],
+            lowEndTint: RGB(r: 0, g: 0, b: 0.10), white: Chromaticity(x: 0.3155, y: 0.3290),
+            primaryShift: [0.004, -0.002, -0.005, 0.010, -0.002, -0.004], defaults: settings(backlight: 30, gamma: "bt1886")),
+        ModeProfile(
+            id: "expert2", path: .sdr, gammaOffset: -0.06, sCurve: 0.02,
+            bumps: [Bump(center: 0.5, width: 0.1, amplitude: RGB(r: 0.015, g: 0, b: 0))],
+            lowEndTint: RGB(r: 0, g: 0, b: 0.06), white: Chromaticity(x: 0.3145, y: 0.3300),
+            primaryShift: [0.003, -0.001, -0.003, 0.006, -0.001, -0.002], defaults: settings(backlight: 50, gamma: "bt1886")),
+        ModeProfile(
+            id: "cinema", path: .sdr, gammaOffset: 0.05, sCurve: -0.02, white: Chromaticity(x: 0.3170, y: 0.3310),
+            primaryShift: [0.008, -0.004, -0.006, 0.015, 0.002, 0.006], defaults: settings(backlight: 60, gamma: "medium")),
+        ModeProfile(
+            id: "filmMaker", path: .sdr, gammaOffset: -0.04, sCurve: 0.015, white: Chromaticity(x: 0.3138, y: 0.3285),
+            primaryShift: [0.002, 0, 0.003, 0.005, 0, 0.002], defaults: settings(backlight: 35, gamma: "bt1886")),
+        ModeProfile(
+            id: "game", path: .sdr, isGame: true, gammaOffset: -0.05, sCurve: 0.02,
+            bumps: [
+                Bump(center: 0.2, width: 0.08, amplitude: RGB(r: 0, g: -0.025, b: 0.01)),
+                Bump(center: 0.6, width: 0.09, amplitude: RGB(r: 0.015, g: 0, b: 0.02)),
+            ],
+            lowEndTint: RGB(r: 0.04, g: 0, b: 0), white: Chromaticity(x: 0.3085, y: 0.3300),
+            primaryShift: [0.012, -0.005, -0.010, 0.020, -0.002, 0.003], defaults: settings(backlight: 100, gamma: "medium")),
+        ModeProfile(
+            id: "hdr_cinema", path: .hdr10, tracking: 0.04,
+            bumps: [Bump(center: 0.3, width: 0.08, amplitude: RGB(r: 0.01, g: -0.01, b: 0))],
+            white: Chromaticity(x: 0.3120, y: 0.3320), defaults: settings(backlight: 100, toneMapping: "off")),
+        ModeProfile(
+            id: "hdr_filmMaker", path: .hdr10, tracking: 0.02, white: Chromaticity(x: 0.3135, y: 0.3305),
+            defaults: settings(backlight: 100, toneMapping: "off")),
+        ModeProfile(
+            id: "hdr_game", path: .hdr10, isGame: true, tracking: 0.01,
+            bumps: [Bump(center: 0.4, width: 0.1, amplitude: RGB(r: 0, g: 0.015, b: -0.01))],
+            lowEndTint: RGB(r: 0.08, g: 0, b: 0.08), white: Chromaticity(x: 0.3110, y: 0.3270),
+            defaults: settings(backlight: 100, toneMapping: "HGIG")),
+        ModeProfile(
+            id: "dolby_cinema_dark", path: .dolbyVision, white: Chromaticity(x: 0.3135, y: 0.3300),
+            defaults: settings(backlight: 100)),
+        ModeProfile(
+            id: "dolby_game", path: .dolbyVision, isGame: true, white: Chromaticity(x: 0.3100, y: 0.3280),
+            defaults: settings(backlight: 100)),
     ]
 
     private static func settings(backlight: Int, gamma: String? = nil, toneMapping: String? = nil) -> [String: JSONValue] {
@@ -104,11 +118,16 @@ struct ModeControls {
 
     init(_ s: [String: JSONValue]) {
         func num(_ key: String, _ fallback: Double) -> Double { s[key]?.doubleValue ?? fallback }
-        backlight = num(PictureKey.backlight, 100); contrast = num(PictureKey.contrast, 85)
-        brightness = num(PictureKey.brightness, 50); color = num(PictureKey.color, 50)
+        backlight = num(PictureKey.backlight, 100)
+        contrast = num(PictureKey.contrast, 85)
+        brightness = num(PictureKey.brightness, 50)
+        color = num(PictureKey.color, 50)
         warmth = s[PictureKey.colorTemperature]?.stringValue.flatMap(Self.warmth) ?? 50
         gamma = s[PictureKey.gamma]?.stringValue.flatMap { Self.gammaValues[$0] } ?? 2.2
-        for c in 0..<3 { gains[c] = num(PictureKey.gains[c], 0); offsets[c] = num(PictureKey.offsets[c], 0) }
+        for c in 0..<3 {
+            gains[c] = num(PictureKey.gains[c], 0)
+            offsets[c] = num(PictureKey.offsets[c], 0)
+        }
         twentyPoint = PictureKey.decodeTwentyPoint(s[PictureKey.twentyPoint]) ?? PictureKey.zeroTwentyPoint
         toneMapping = s[PictureKey.hdrDynamicToneMapping]?.stringValue ?? "off"
     }
@@ -141,8 +160,9 @@ public struct ModeCalibration: Hashable, Sendable {
 /// in linear light into the native WOLED primaries (BT.2020 content is clipped at the native gamut) → white-point
 /// error → XYZ. Black is a constant 0.0005 cd/m² with a slight blue tint. ABL and settling are applied by the panel.
 enum PanelPipeline {
-    static let native = ColorSpacePrimaries(red: Chromaticity(x: 0.676, y: 0.316), green: Chromaticity(x: 0.253, y: 0.700),
-                                            blue: Chromaticity(x: 0.145, y: 0.052), white: .d65)
+    static let native = ColorSpacePrimaries(
+        red: Chromaticity(x: 0.676, y: 0.316), green: Chromaticity(x: 0.253, y: 0.700),
+        blue: Chromaticity(x: 0.145, y: 0.052), white: .d65)
     static let sdrPeak = 420.0
     static let hdrPeak = 800.0
     static let black = Chromaticity(x: 0.300, y: 0.315).xyz(Y: 0.0005)
@@ -158,8 +178,10 @@ enum PanelPipeline {
     /// Peak scale for OLED light 0…100 (100 → 1).
     static func peakScale(backlight: Double) -> Double { 0.05 + 0.95 * pow((backlight / 100).clamped(0, 1), 1.2) }
 
-    static func xyz(signal: SignalRGB, format: SignalFormat, metadata: HDR10StaticMetadata?, path: DynamicRange,
-                    profile: ModeProfile, controls: ModeControls, calibration: ModeCalibration) -> XYZ {
+    static func xyz(
+        signal: SignalRGB, format: SignalFormat, metadata: HDR10StaticMetadata?, path: DynamicRange,
+        profile: ModeProfile, controls: ModeControls, calibration: ModeCalibration
+    ) -> XYZ {
         let scale = peakScale(backlight: controls.backlight)
         let w = Double(50 - controls.warmth)
         let whiteScale = native.linearRGB(from: profile.white.xyz(Y: 1)) * RGB(r: 1 - 0.002 * w, g: 1, b: 1 + 0.004 * w)
@@ -203,7 +225,8 @@ enum PanelPipeline {
             peak = hdrPeak * scale
             for c in 0..<3 {
                 let content = PQ.eotf(s[c]) * (1 + profile.deviation(s[c], channel: c))
-                e[c] = toneMap(content, style: controls.toneMapping, params: calibration.toneMap, metadata: metadata, panelPeak: peak) / peak
+                e[c] =
+                    toneMap(content, style: controls.toneMapping, params: calibration.toneMap, metadata: metadata, panelPeak: peak) / peak
             }
         }
         let luma = 0.2126 * e.r + 0.7152 * e.g + 0.0722 * e.b
@@ -216,7 +239,8 @@ enum PanelPipeline {
     /// The TV's HDR10 static tone mapping. HGIG: hard clip at the panel peak. Otherwise roll-off toward the target
     /// peak (uploaded `displayLuminance`, else the panel peak) from a knee (uploaded roll-off %, else 70 %; 60 % with
     /// dynamic tone mapping "on"), mapping max(1000, MaxMDL) to the target peak.
-    static func toneMap(_ L: Double, style: String, params: ToneMapParameters?, metadata: HDR10StaticMetadata?, panelPeak: Double) -> Double {
+    static func toneMap(_ L: Double, style: String, params: ToneMapParameters?, metadata: HDR10StaticMetadata?, panelPeak: Double) -> Double
+    {
         if style == "HGIG" { return min(L, panelPeak) }
         let target = params.map { Double($0.displayLuminance) } ?? panelPeak
         let knee = (style == "on" ? 0.6 : params.map { Double($0.rolloffPoint) / 100 } ?? 0.7) * target

@@ -1,7 +1,8 @@
-import Foundation
-import Testing
 import ColorScience
+import Foundation
 import PatternLink
+import Testing
+
 @testable import Calibration
 
 @Suite struct SimulationTests {

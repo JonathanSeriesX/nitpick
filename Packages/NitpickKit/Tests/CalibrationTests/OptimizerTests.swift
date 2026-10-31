@@ -1,12 +1,15 @@
-import Foundation
-import Testing
 import ColorScience
+import Foundation
 import PatternLink
+import Testing
+
 @testable import Calibration
 
 @Suite struct OptimizerTests {
     /// Gains at 80 % on expert1 through the real TV/meter path.
-    func gainRun(_ rig: Rig, start: [Int], target: Chromaticity = .d65, tolerance: Double = 0.5) async throws -> WhiteBalanceOptimizer.Result {
+    func gainRun(_ rig: Rig, start: [Int], target: Chromaticity = .d65, tolerance: Double = 0.5) async throws
+        -> WhiteBalanceOptimizer.Result
+    {
         let ctx = rig.context(.sdrMovie, mode: "expert1")
         var current = [0, 0, 0]
         try await ctx.write(keys: PictureKey.gains, values: start, previous: current)
