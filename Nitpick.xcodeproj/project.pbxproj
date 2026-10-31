@@ -9,14 +9,20 @@
 /* Begin PBXBuildFile section */
 		18C26F7DBC0405390A3E66E4 /* LGControl in Frameworks */ = {isa = PBXBuildFile; productRef = FEC3F7594C38FFFFDC78C12A /* LGControl */; };
 		1B4CB4B9F37CC6D17AA72CE8 /* PatternLink in Frameworks */ = {isa = PBXBuildFile; productRef = CB85FE8E0656478A878A0AF4 /* PatternLink */; };
+		46A21EF4170CDC9A0BB1D24E /* StandaloneMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78BFDD1757410156899A55D /* StandaloneMenu.swift */; };
 		4D7A221607FE51CCD394AD5B /* Calibration in Frameworks */ = {isa = PBXBuildFile; productRef = 946590D83A205AA052BD7892 /* Calibration */; };
 		61E2FDBB6983420749CB331A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7E0FC8B82ED55B459D23CF09 /* Assets.xcassets */; };
 		6990FE84456148F7E8F565BB /* NitpickApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1A1BB5BEE6B29D20DDF548E /* NitpickApp.swift */; };
+		75A323F9150A5B8E30120450 /* ConnectedOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FAEA2438EE249C819A62A7B /* ConnectedOverlay.swift */; };
 		8FBB373C50CA1D12FBE94E35 /* MeterKit in Frameworks */ = {isa = PBXBuildFile; productRef = D0E620260B2578A7BC3B73D9 /* MeterKit */; };
 		8FDDC7783DE0203901E0DA8E /* ColorScience in Frameworks */ = {isa = PBXBuildFile; productRef = 6AC7048799D7360FE026D7C2 /* ColorScience */; };
+		98BC242CA65FFD85C6592771 /* LinkCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4B48A2A3600765BC065962C /* LinkCoordinator.swift */; };
+		99959E6BE31E95B74FA57F00 /* PatternRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9813DED259AD29A3DFA2450C /* PatternRenderer.swift */; };
 		B676933B73418987FF1ED3A5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 15B4971338AC033474C20B2D /* Assets.xcassets */; };
+		BE145A5AC5FAC8DB75966507 /* PairingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5B85723C2C8A599753853F9 /* PairingScreen.swift */; };
 		C3B6D7FE52557500643BB7DF /* ColorScience in Frameworks */ = {isa = PBXBuildFile; productRef = 9B807589A370160D8109FA76 /* ColorScience */; };
 		CCD728C3D1EAEA1BC8C85800 /* PatternLink in Frameworks */ = {isa = PBXBuildFile; productRef = D6026F4BBC0E423E104F1C1C /* PatternLink */; };
+		DF0B0C403137EA3E432F623B /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C7244F150A7605C12F8594C /* RootView.swift */; };
 		F11CC0CCA36F3E18B35D6066 /* NitpickTVApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 186FA284325AA9EDBB2328ED /* NitpickTVApp.swift */; };
 /* End PBXBuildFile section */
 
@@ -28,10 +34,16 @@
 		184F8987E39868FE2B3C4983 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		186FA284325AA9EDBB2328ED /* NitpickTVApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NitpickTVApp.swift; sourceTree = "<group>"; };
 		291E6C011C061A951B168EC9 /* NitpickTV.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NitpickTV.entitlements; sourceTree = "<group>"; };
+		5C7244F150A7605C12F8594C /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		5FAEA2438EE249C819A62A7B /* ConnectedOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedOverlay.swift; sourceTree = "<group>"; };
 		7E0FC8B82ED55B459D23CF09 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		9813DED259AD29A3DFA2450C /* PatternRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatternRenderer.swift; sourceTree = "<group>"; };
+		A5B85723C2C8A599753853F9 /* PairingScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairingScreen.swift; sourceTree = "<group>"; };
+		A78BFDD1757410156899A55D /* StandaloneMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandaloneMenu.swift; sourceTree = "<group>"; };
 		B60730F1CD267AFC2B644C5B /* NitpickKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = NitpickKit; path = Packages/NitpickKit; sourceTree = SOURCE_ROOT; };
 		B7FE7E0B4180968F13307CC9 /* Nitpick.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Nitpick.entitlements; sourceTree = "<group>"; };
 		C1A1BB5BEE6B29D20DDF548E /* NitpickApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NitpickApp.swift; sourceTree = "<group>"; };
+		E4B48A2A3600765BC065962C /* LinkCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkCoordinator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,6 +80,17 @@
 			path = Apps;
 			sourceTree = "<group>";
 		};
+		3D78FFC4ABC3FA0C8FB72BDD /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				5FAEA2438EE249C819A62A7B /* ConnectedOverlay.swift */,
+				A5B85723C2C8A599753853F9 /* PairingScreen.swift */,
+				5C7244F150A7605C12F8594C /* RootView.swift */,
+				A78BFDD1757410156899A55D /* StandaloneMenu.swift */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
 		3DB7DF4EBDB283CB08FC0FCE /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -77,15 +100,34 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		586B4BB2F4F53068A1367628 /* Rendering */ = {
+			isa = PBXGroup;
+			children = (
+				9813DED259AD29A3DFA2450C /* PatternRenderer.swift */,
+			);
+			path = Rendering;
+			sourceTree = "<group>";
+		};
 		7A898B9DB461789C460F6FF5 /* NitpickTV */ = {
 			isa = PBXGroup;
 			children = (
+				828DB3FB7D6325975706EB05 /* Link */,
+				586B4BB2F4F53068A1367628 /* Rendering */,
+				3D78FFC4ABC3FA0C8FB72BDD /* UI */,
 				7E0FC8B82ED55B459D23CF09 /* Assets.xcassets */,
 				158267BFA9E37441A31215FE /* Info.plist */,
 				291E6C011C061A951B168EC9 /* NitpickTV.entitlements */,
 				186FA284325AA9EDBB2328ED /* NitpickTVApp.swift */,
 			);
 			path = NitpickTV;
+			sourceTree = "<group>";
+		};
+		828DB3FB7D6325975706EB05 /* Link */ = {
+			isa = PBXGroup;
+			children = (
+				E4B48A2A3600765BC065962C /* LinkCoordinator.swift */,
+			);
+			path = Link;
 			sourceTree = "<group>";
 		};
 		E79ACDECA6BB77E88E4F9A99 /* NitpickMac */ = {
@@ -238,7 +280,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				75A323F9150A5B8E30120450 /* ConnectedOverlay.swift in Sources */,
+				98BC242CA65FFD85C6592771 /* LinkCoordinator.swift in Sources */,
 				F11CC0CCA36F3E18B35D6066 /* NitpickTVApp.swift in Sources */,
+				BE145A5AC5FAC8DB75966507 /* PairingScreen.swift in Sources */,
+				99959E6BE31E95B74FA57F00 /* PatternRenderer.swift in Sources */,
+				DF0B0C403137EA3E432F623B /* RootView.swift in Sources */,
+				46A21EF4170CDC9A0BB1D24E /* StandaloneMenu.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
